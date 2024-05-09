@@ -10,7 +10,7 @@ def generate_background_image(width, height, background_color, border_width, bor
     image.paste(border_left_right, (width - border_width, 0))
     return image
 
-def draw_body_text_on_image(background_image, body_text, font_path, margin=100, image_path=None):
+def gen_slide(background_image, body_text, font_path, margin=100, image_path=None):
     body_text_font = ImageFont.truetype(font_path, 52)
     draw = ImageDraw.Draw(background_image)
     lines = [line.split(' ') for line in body_text.replace('\n\n', '\n').split('\n')]
