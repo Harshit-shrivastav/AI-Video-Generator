@@ -40,9 +40,8 @@ def gen_slide(background_image, body_text, font_path, margin=100, image_path=Non
                 line_text = ''
             line_width += word_width
             line_text += word + ' '
+            line_text += ('...' if line_text[-1] != ".")
         if line_text:
-            if not line_text.endswith('.'):
-                line_text += '...'
             draw.text((margin, body_text_y), line_text, font=body_text_font, fill=(0, 0, 0))
             body_text_y += body_text_font.size
     return background_image, None
