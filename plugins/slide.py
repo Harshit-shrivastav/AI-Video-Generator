@@ -10,7 +10,6 @@ def generate_background_image(width, height, background_color, border_width, bor
     image.paste(border_left_right, (width - border_width, 0))
     return image
 
-
 def draw_body_text_on_image(background_image, body_text, font_path, margin=100, image_path=None):
     # Load the font for body text with an increased font size
     body_text_font = ImageFont.truetype(font_path, 36)
@@ -32,7 +31,6 @@ def draw_body_text_on_image(background_image, body_text, font_path, margin=100, 
         available_height_for_text -= (inserted_image.height + margin)
 
     remaining_text = ''
-    remaining_lines = []
 
     # Draw each line of the body text onto the background image
     body_text_y = margin
@@ -44,17 +42,19 @@ def draw_body_text_on_image(background_image, body_text, font_path, margin=100, 
             if line_width + word_width > max_line_width:
                 draw.text((margin, body_text_y), line_text, font=body_text_font, fill=(0, 0, 0))
                 body_text_y += body_text_font.size
-                if body_text_y + body_text_font.size >= available_height_for_text:
-                    remaining_lines.append(' '.join(line))
-                    remaining_text += '\n' + ' '.join(remaining_lines)
+                if body_text_y + body_text_font.size > available_height_for_text:
+                    remaining_text += '\n' + ' '.join(line)
                     break
                 line_width = 0
                 line_text = ''
             line_width += word_width
             line_text += word + ' '
         if line_text:
-            draw.text((margin, body_text_y), line_text, font=body_text_font, fill=(0, 0, 0))
-            body_text_y += body_text_font.size
+            if body_text_y + body_text_font.size <= available_height_for_text:
+                draw.text((margin, body_text_y), line_text, font=body_text_font, fill=(0, 0, 0))
+                body_text_y += body_text_font.size
+            else:
+                remaining_text += '\n' + line_text.strip()
 
     # Insert the image at the bottom side of the background image if an image path is provided
     if image_path:
