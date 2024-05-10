@@ -16,6 +16,6 @@ def get_gemini_response(prompt, image=None):
             os.environ["GOOGLE_API_KEY"] = getpass.getpass("Gemini API KEY is missing in environment.")
         with Image.open(image) as img:
             llm = ChatGoogleGenerativeAI(model="gemini-pro")
-            message = HumanMessage(content=[{"type": "text", "text": prompt},{"type": "image_url", "image_url": image}])
+            message = HumanMessage(content=[{"type": "text", "text": prompt},{"type": "image_url", "image_url": img}])
             result = llm.invoke(message)
             return result.content
