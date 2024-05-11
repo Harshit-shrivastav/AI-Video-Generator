@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import edge_tts
 from edge_tts import VoicesManager
 
-def generate_voice(text, output_file, language='english'):
+def get_edge_tts(text, language='english'):
     language_mapping = {
         'english': 'en',
         'persian': 'fa',
@@ -82,7 +82,7 @@ def generate_voice(text, output_file, language='english'):
         'uzbek': 'uz'
     }
 
-    async def async_generate_audio(text, output_file, lang):
+    async def async_generate_audio(text, lang):
         try:
             voices = await VoicesManager.create()
             if lang == "english":
@@ -91,36 +91,25 @@ def generate_voice(text, output_file, language='english'):
                 voice = voices.find(Language=lang)
             speaker = random.choice(voice)["Name"]
             communicate = edge_tts.Communicate(text, speaker)
-            with open(output_file, "wb") as file:
-                async for chunk in communicate.stream():
-                    if chunk["type"] == "audio":
-                        file.write(chunk["data"])
-
+            audio_data = b''
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    audio_data += chunk["data"]
+            return audio_data
         except Exception as e:
-            print("Error generating audio using edge_tts", e)
-            raise Exception("An error occurred during audio generation, no output audio generated", e)
-        return output_file
+            print("Error generating audio using edge_tts:", e)
+            raise
 
-    def run_async(loop, func, *args):
-        return loop.run_until_complete(func(*args))
-
-    def get_edge_tts(text, output_file, lang):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+    async def run_async(text, lang):
         try:
-            with ThreadPoolExecutor() as executor:
-                loop.run_in_executor(executor, run_async, loop, async_generate_audio, text, output_file, lang)
-        finally:
-            loop.close()
-        if not os.path.exists(output_file):
-            print("An error occurred during audio generation, no output audio generated")
-            raise Exception("An error occurred during audio generation, no output audio generated")
-        return output_file
+            return await async_generate_audio(text, lang)
+        except Exception as e:
+            print("An error occurred during audio generation:", e)
+            raise
 
     try:
         lang_code = language_mapping.get(language.lower(), 'en')
-        return get_edge_tts(text, output_file, lang_code)
+        return asyncio.run(run_async(text, lang_code))
     except Exception as e:
         print("Error generating text to speech:", e)
-        return False
-        
+        return None
