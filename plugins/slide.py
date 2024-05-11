@@ -12,7 +12,7 @@ def generate_background_image(width, height, background_color, border_width, bor
 
     return image
 
-def write_text_on_image(background_image, text, output_image_path, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0)):
+def write_text_on_image(background_image, text, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0)):
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
     font = ImageFont.truetype(font_path, size=font_size)
@@ -26,12 +26,12 @@ def write_text_on_image(background_image, text, output_image_path, font_path="ar
     last_period_index = None
 
     for i, word in enumerate(words):
-        word_width = font.getlength(word)
+        word_width = font.getsize(word)[0]
 
         # Handle long words that don't fit on a single line
         if word_width >= width - 200:
             for char in word:
-                char_width = font.getlength(char)
+                char_width = font.getsize(char)[0]
                 if line_width + char_width >= width - 200:
                     text_y += font_size
                     if text_y >= max_height:
@@ -54,7 +54,7 @@ def write_text_on_image(background_image, text, output_image_path, font_path="ar
                 break
             line_width = word_width
         else:
-            line_width += word_width + font.getlength(' ')
+            line_width += word_width + font.getsize(' ')[0]
         written_text.append(word)
         draw.text((text_x + line_width - word_width, text_y), word, font=font, fill=text_color)
 
@@ -62,16 +62,17 @@ def write_text_on_image(background_image, text, output_image_path, font_path="ar
         written_text = written_text[:last_period_index]
         remaining_text = words[last_period_index:]
 
-    background_image.save(output_image_path)
     extra_text = ' '.join(remaining_text)
     written_text = ' '.join(written_text)
     print(f"Text written on image: {written_text}")
     if extra_text:
         print(f"Extra text: {extra_text}")
-        return written_text, extra_text
+        return background_image, written_text, extra_text
     else:
-        return written_text, None
-    
+        return background_image, written_text, None
 
-background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
-extra_text = write_text_on_image(background_image, '''this is another sentence''', "output.png")
+"""
+image = Image.open("background_image.jpg")
+output_image, written_text, extra_text = write_text_on_image(image, "Hello, this is a long text to test the function")
+output_image.show()
+"""
