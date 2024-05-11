@@ -87,7 +87,8 @@ def write_text_on_image(background_image, text, output_image_path, title=None, f
 
     return extra_text
 
-background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+#background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235, 255))
 extra_text = write_text_on_image(background_image, "This is another sentence. This is another sentence.", "output_without_title.png")
 
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
