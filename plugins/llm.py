@@ -23,10 +23,10 @@ def chatgpt(msg):
 def get_llm_response(prompt, image=None):
     if image and "GOOGLE_API_KEY" in os.environ:
         if prompt:
-            img = PIL.Image.open(image)
-            llm = genai.GenerativeModel('gemini-pro')
+            img = Image.open(image)
+            llm = genai.GenerativeModel('gemini-pro-vision')
             if img:
-                response = model.generate_content(prompt, img)
+                response = llm.generate_content([prompt, img])
                 return response.text
             else:
                 return False
@@ -43,13 +43,7 @@ def get_llm_response(prompt, image=None):
     elif (not image and "GOOGLE_API_KEY" in os.environ):
         if prompt:
             llm = genai.GenerativeModel('gemini-pro')
-            response = model.generate_content(prompt)
+            response = llm.generate_content(prompt)
             return response.text
     else:
         return False 
-        
-                  
-
-
-
-
