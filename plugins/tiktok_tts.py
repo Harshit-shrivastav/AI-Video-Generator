@@ -12,7 +12,7 @@ def get_tt_tts(text, output_file_path, speaker="en_us_001"):
             if data.get('data'):
                 # Decode base64-encoded audio data
                 audio_data = base64.b64decode(data['data'])
-                save_audio(audio_data, output_file_path)
+                #save_audio(audio_data, output_file_path)
                 return audio_data, speaker
             else:
                 print(f"Generation failed: {data.get('error', 'Unknown error')}")
