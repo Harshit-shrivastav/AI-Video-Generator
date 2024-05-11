@@ -1,15 +1,15 @@
 from elevenlabs import play
 from elevenlabs.client import ElevenLabs
+import os
 
-client = ElevenLabs(
-  api_key="YOUR_API_KEY",
-)
+API_KEY = os.environ.get("ELEVENLABS_API_KRY")
 
-audio = client.generate(
-  text="Hello! 你好! Hola! नमस्ते! Bonjour! こんにちは! مرحبا! 안녕하세요! Ciao! Cześć! Привіт! வணக்கம்!",
-  voice="Rachel",
-  model="eleven_multilingual_v2"
-)
-play(audio)
 
-def get_el
+def get_elevenlabs_tts(Text , Voice):
+    if "GOOGLE_API_KEY" in os.environ:
+        client = ElevenLabs(api_key=API_KEY)
+        audio = client.generate(text=Text, voice = Voice, model="eleven_multilingual_v2")
+        return audio 
+    else:
+        print("ElevenLabs API KEY is not available in environment")
+        return False 
