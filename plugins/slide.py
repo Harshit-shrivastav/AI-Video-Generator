@@ -68,7 +68,10 @@ def write_text_on_image(background_image, text, output_image_path, font_path="ar
     print(f"Text written on image: {written_text}")
     if extra_text:
         print(f"Extra text: {extra_text}")
-    return extra_text
+        return written_text, extra_text
+    else:
+        return written_text, None
+    
 
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
 extra_text = write_text_on_image(background_image, '''this is another sentence''', "output.png")
