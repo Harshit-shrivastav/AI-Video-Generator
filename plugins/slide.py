@@ -1,15 +1,13 @@
 from PIL import Image, ImageDraw, ImageFont
 
 def generate_background_image(width, height, background_color, border_width, border_color):
-    image = Image.new('RGBA', (width, height), background_color + (255,))
-    border_top_bottom = Image.new('RGBA', (width, border_width), border_color + (255,))
-    border_left_right = Image.new('RGBA', (border_width, height), border_color + (255,))
-
-    image.paste(border_top_bottom, (0, 0))
-    image.paste(border_top_bottom, (0, height - border_width))
-    image.paste(border_left_right, (0, 0))
-    image.paste(border_left_right, (width - border_width, 0))
-
+    image = Image.new('RGBA', (width, height), background_color + (255,))  # Adding 255 for alpha channel
+    border_top_bottom = Image.new('RGBA', (width, border_width), (*border_color, 255))
+    border_left_right = Image.new('RGBA', (border_width, height), (*border_color, 255))
+    image.paste(border_top_bottom, (0, 0))  # Top
+    image.paste(border_top_bottom, (0, height - border_width))  # Bottom
+    image.paste(border_left_right, (0, 0))  # Left
+    image.paste(border_left_right, (width - border_width, 0))  # Right
     return image
 
 def write_text_on_image(background_image, text, output_image_path, title=None, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0), title_font_size=48):
@@ -87,10 +85,11 @@ def write_text_on_image(background_image, text, output_image_path, title=None, f
 
     return extra_text
 
-#background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
-background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235, 255))
+# without title 
+background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
 extra_text = write_text_on_image(background_image, "This is another sentence. This is another sentence.", "output_without_title.png")
 
-background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+# with title
+background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
 title = "Example Title"
 extra_text = write_text_on_image(background_image, "This is another sentence. This is another sentence.", "output_with_title.png", title=title)
