@@ -104,7 +104,7 @@ def generate_voice(text, output_file, language='english'):
     def run_async(loop, func, *args):
         return loop.run_until_complete(func(*args))
 
-    def generate_audio(text, output_file, lang):
+    def get_edge_tts(text, output_file, lang):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
@@ -119,6 +119,8 @@ def generate_voice(text, output_file, language='english'):
 
     try:
         lang_code = language_mapping.get(language.lower(), 'en')
-        return generate_audio(text, output_file, lang_code)
+        return get_edge_tts(text, output_file, lang_code)
     except Exception as e:
         print("Error generating text to speech:", e)
+        return False
+        
