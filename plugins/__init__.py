@@ -13,7 +13,7 @@ speaker = str(input("Enter a speaker name"))
 
 llm_response = get_llm_response(title)
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
-slide, written_text, extra_text = write_text_on_image(background_image, llm_response, "temps/slides/slide.png")
+slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
 
 
 voice = ''
