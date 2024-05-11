@@ -8,16 +8,16 @@ from .model import get_llm_response
 
 
 title = str(input("Please enter a title to get started")
-llm_response = get_llm_response(title)
+ask_tts = int(input("which tts service do you want to use\n1. ElevenLabs \n2. Edge\n3. TikTok")
+speaker = str(input("Enter a speaker name"))
 
+llm_response = get_llm_response(title)
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
 slide, written_text, extra_text = write_text_on_image(background_image, llm_response, "temps/slides/slide.png")
 
-ask_tts = int(input("which tts service do you want to use\n1. ElevenLabs \n2. Edge\n3. TikTok")
 
 voice = ''
 if ask_tts == 1:
-    speaker = str(input("Enter a speaker name"))
     voice = get_elevenlabs_tts(written_text, speaker)
 elif ask_tts == 2:
     voice = get_edge_tts(written_text):
