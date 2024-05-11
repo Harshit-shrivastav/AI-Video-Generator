@@ -2,7 +2,7 @@ from elevenlabs import play
 from elevenlabs.client import ElevenLabs
 import os
 
-API_KEY = os.environ.get("ELEVENLABS_API_KRY")
+API_KEY = os.environ.get("ELEVENLABS_API_KEY")
 
 
 def get_elevenlabs_tts(Text , Voice):
