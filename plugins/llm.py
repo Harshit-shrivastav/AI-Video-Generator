@@ -20,7 +20,8 @@ def chatgpt(msg):
         return False
 
 
-def get_llm_response(prompt, image=None):
+def get_llm_response(Prompt, image=None):
+    prompt = f'''{SystemMessage} {Prompt}'''
     if image and "GOOGLE_API_KEY" in os.environ:
         if prompt:
             img = Image.open(image)
