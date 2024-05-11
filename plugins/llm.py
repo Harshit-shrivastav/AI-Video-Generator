@@ -1,4 +1,4 @@
-import getpass
+import requests
 import os
 import google.generativeai as genai
 from PIL import Image 
@@ -23,9 +23,13 @@ def chatgpt(msg):
 def get_llm_response(prompt, image=None):
     if image and "GOOGLE_API_KEY" in os.environ:
         if prompt:
+            img = PIL.Image.open(image)
             llm = genai.GenerativeModel('gemini-pro')
-            response = model.generate_content(prompt)
-            return response.text
+            if img:
+                response = model.generate_content(prompt, img)
+                return response.text
+            else:
+                return False
     elif (image and "GOOGLE_API_KEY" not in os.environ):
         print("Please set GOOGLE_API_KEY as environment variable, to use image.")
         return False
