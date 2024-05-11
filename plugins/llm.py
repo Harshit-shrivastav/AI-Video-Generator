@@ -1,7 +1,6 @@
 import getpass
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage
+import google.generativeai as genai
 from PIL import Image 
 
 def chatgpt(msg):
@@ -23,11 +22,10 @@ def chatgpt(msg):
 
 def get_llm_response(prompt, image=None):
     if image and "GOOGLE_API_KEY" in os.environ:
-        with Image.open(image) as img:
-            llm = ChatGoogleGenerativeAI(model="gemini-pro")
-            message = HumanMessage(content=[{"type": "text", "text": prompt},{"type": "image_url", "image_url": img}])
-            result = llm.invoke(message)
-            return result.content
+        if prompt:
+            llm = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(prompt)
+            return response.text
     elif (image and "GOOGLE_API_KEY" not in os.environ):
         print("Please set GOOGLE_API_KEY as environment variable, to use image.")
         return False
@@ -36,11 +34,13 @@ def get_llm_response(prompt, image=None):
             result = chatgpt(prompt)
             if result:
                 return result
+            else:
+                return False 
     elif (not image and "GOOGLE_API_KEY" in os.environ):
         if prompt:
-            result = chatgpt(prompt)
-            if result:
-                return result
+            llm = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(prompt)
+            return response.text
     else:
         return False 
         
