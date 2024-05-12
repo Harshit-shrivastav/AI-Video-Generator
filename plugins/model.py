@@ -3,6 +3,10 @@ import os
 import google.generativeai as genai
 from PIL import Image 
 
+
+genai.configure(api_key="AIzaSyAP3zoLugD3in6sp-anDektbEUpCeVWxos")
+
+
 def chatgpt(msg):
     url = f'https://api.voidevs.com/gpt/free?msg={msg}'
     try:
