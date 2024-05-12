@@ -12,7 +12,7 @@ def generate_background_image(width, height, background_color, border_width, bor
 
     return image
 
-def write_text_on_image(background_image, text, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0)):
+def write_text_on_image(background_image, text, font_path="assets/fonts/Roboto-Black.ttf", font_size=36, text_color=(0, 0, 0)):
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
     font = ImageFont.truetype(font_path, size=font_size)
