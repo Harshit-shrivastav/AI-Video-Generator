@@ -9,22 +9,37 @@ from model import get_llm_response
 title = str(input("Please enter a title to get started: "))
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
 speaker = None
+
 if ask_tts == 1 or ask_tts == 2:
     speaker = str(input("Enter a speaker name: "))
 
 llm_response = get_llm_response(title)
+
 if llm_response:
-    print("llm response fetched:", llm_response)
+    print("LLM response fetched:", llm_response)
+else:
+    print("Failed to fetch LLM response. Exiting.")
+    exit()
+
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+
 if background_image:
-    print("bkg img fetched")
+    print("Background image fetched")
+else:
+    print("Failed to generate background image. Exiting.")
+    exit()
+
 slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
+
 if slide:
-    print("slide fetched")
+    print("Slide fetched")
+else:
+    print("Failed to generate slide. Exiting.")
+    exit()
 
 videos = []
 
-if extra_text: # trying to do it recursive 
+while extra_text: # Loop until no more extra text
     voice = ''
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
@@ -35,11 +50,21 @@ if extra_text: # trying to do it recursive
 
     vid = merge_image_and_audio(slide, voice)
     if vid:
-        print("video merged")
+        print("Video merged")
+        videos.append(vid)
+    else:
+        print("Failed to merge video. Skipping.")
+    
+    slide, written_text, extra_text = write_text_on_image(background_image, extra_text)
+
+vid = merge_image_and_audio(slide, voice)
+
+if vid:
+    print("Final video merged")
     videos.append(vid)
-    slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
 else:
-    vid = merge_image_and_audio(slide, voice)
-    videos.append(vid)
+    print("Failed to merge final video. Exiting.")
+    exit()
 
 join_videos(videos, "results/finalvideo.mp4")
+print("Final video created successfully!")
