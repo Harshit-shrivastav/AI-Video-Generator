@@ -21,13 +21,14 @@ def chatgpt(msg):
 
 
 def get_llm_response(Prompt, image=None):
-    prompt = f'''{SystemMessage} {Prompt}'''
+    prompt = f'''{Prompt}'''
     if image and "GOOGLE_API_KEY" in os.environ:
         if prompt:
             img = Image.open(image)
             llm = genai.GenerativeModel('gemini-pro-vision')
             if img:
                 response = llm.generate_content([prompt, img])
+                print(response.text)
                 return response.text
             else:
                 return False
@@ -45,6 +46,7 @@ def get_llm_response(Prompt, image=None):
         if prompt:
             llm = genai.GenerativeModel('gemini-pro')
             response = llm.generate_content(prompt)
+            print(response.text)
             return response.text
     else:
         return False 
