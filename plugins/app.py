@@ -13,12 +13,18 @@ if ask_tts == 1 or ask_tts == 2:
     speaker = str(input("Enter a speaker name: "))
 
 llm_response = get_llm_response(title)
+if llm_response:
+    print("llm response fetched:", llm_response)
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+if background_image:
+    print("bkg img fetched")
 slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
+if slide:
+    print("slide fetched")
 
 videos = []
 
-while extra_text:
+if extra_text: # trying to do it recursive 
     voice = ''
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
@@ -28,6 +34,8 @@ while extra_text:
         voice = get_tt_tts(written_text)
 
     vid = merge_image_and_audio(slide, voice)
+    if vid:
+        print("video merged")
     videos.append(vid)
     slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
 else:
