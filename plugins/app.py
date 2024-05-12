@@ -8,7 +8,9 @@ from model import get_llm_response
 
 title = str(input("Please enter a title to get started: "))
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
-speaker = str(input("Enter a speaker name: "))
+speaker = None
+if ask_tts == 1 or ask_tts == 2:
+    speaker = str(input("Enter a speaker name: "))
 
 llm_response = get_llm_response(title)
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
