@@ -31,8 +31,13 @@ if background_image:
 else:
     print("Failed to generate background image. Exiting.")
     exit()
-
-slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
+slide = None
+written_text = None 
+extra_text = None 
+try:
+    slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
+except Exception as e:
+    print(e)
 
 if slide:
     print("Slide fetched")
