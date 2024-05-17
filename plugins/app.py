@@ -56,6 +56,7 @@ while extra_text: # Loop until no more extra text
         voice = get_tt_tts(written_text)
     try:
         vid = merge_image_and_audio(slide, voice)
+        print("img and aud merged")
     except Exception as e:
         print(e)
     if vid:
