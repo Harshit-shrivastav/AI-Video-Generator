@@ -50,7 +50,7 @@ def get_llm_response(prompt, image=None):
             response = llm.generate_content(formatted_prompt)
             return response.text
         except Exception as e:
-            print(f"Error generating response with Google AI: {e}, trying with grog if possible.")
+            print(f"Error generating response with Google AI: {e}, trying with Groq if possible.")
             if GROQ_API_KEY:
                 result = get_groq_response(prompt)
                 return result
