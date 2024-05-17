@@ -31,6 +31,7 @@ else:
 
 slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
 if slide and written_text:
+    print("Written text:" written_text)
     print("Slide and written text fetched")
 else:
     print("Failed to generate slide or written text. Exiting.")
@@ -47,7 +48,7 @@ while extra_text:
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
-            print("TikTok voice fetched")
+           # print("TikTok voice fetched")
         except Exception as e:
             print("Failed to fetch TikTok voice:", e)
     
