@@ -1,11 +1,11 @@
 import requests
 import os
-from PIL import Image  # Assuming you need to handle image inputs
+from PIL import Image 
 import google.generativeai as genai
 from groq import Groq
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+GROQ_API_KEY = "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"
+GOOGLE_API_KEY = "AIzaSyAGe0LzEjcyRNZCtTMALDlsSRKsHLf_e84"
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
