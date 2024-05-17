@@ -13,8 +13,8 @@ def get_groq_response(prompt):
     chat_completion = client.chat.completions.create(
         messages=[
             {
-                "role": "user",
-                "content": prompt,
+                "role": "system",
+                "content": "You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.",
             },
             {
                 "role": "user",
@@ -50,3 +50,41 @@ def get_llm_response(Prompt, image=None):
     else:
         print("Unconditional Exception")
         return False
+
+
+
+def get_llm_response(Prompt, image=None):
+    prompt = f"""You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.
+    Topic :- {Prompt}
+    Your Answer :- 
+    """
+    if image and "GOOGLE_API_KEY" in os.environ:
+        if prompt:
+            img = Image.open(image)
+            llm = genai.GenerativeModel('gemini-pro-vision')
+            if img:
+                response = llm.generate_content([prompt, img])
+                return response.text
+            else:
+                return False
+    elif (image and "GOOGLE_API_KEY" not in os.environ):
+        print("Please set GOOGLE_API_KEY as environment variable, to use image.")
+        return False
+    elif (not image and "GOOGLE_API_KEY" not in os.environ):
+        if GROQ_API_KEY:
+            if prompt:
+                result = get_groq_response(Prompt)
+                if result:
+                    return result
+                else:
+                    return False 
+        else:
+            print("No Ai API key found.")
+            return False 
+    elif (not image and "GOOGLE_API_KEY" in os.environ):
+        if prompt:
+            llm = genai.GenerativeModel('gemini-pro')
+            response = llm.generate_content(prompt)
+            return response.text
+    else:
+        return False 
