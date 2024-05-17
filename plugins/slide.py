@@ -28,7 +28,7 @@ def load_font(font_path, font_size):
         font = ImageFont.truetype(font_path, font_size)
     return font
 
-def write_text_on_image(background_image, text, font_path="https://github.com/Harshit-shrivastav/ai-video-generator/raw/v2/assets/fonts/RobotoCondensed-Black.ttf", font_size=150, text_color=(0, 0, 0)):
+def write_text_on_image(background_image, text, font_path="https://github.com/Harshit-shrivastav/ai-video-generator/raw/v2/assets/fonts/RobotoCondensed-Black.ttf", font_size=100, text_color=(0, 0, 0)):
     """
     Writes complete sentences on the background image starting from the upper-left corner with a margin of 100 pixels from the edges.
     The text after the last full stop is not written on the image.
