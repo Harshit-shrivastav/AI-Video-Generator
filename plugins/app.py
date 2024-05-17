@@ -10,6 +10,7 @@ title = str(input("Please enter a title to get started: "))
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
 speaker = None
 llm_response = None
+voice = None
 
 if ask_tts == 1 or ask_tts == 2:
     speaker = str(input("Enter a speaker name: "))
@@ -40,30 +41,35 @@ else:
     exit()
 
 videos = []
+extra_text = None
+written_text = None
+slide = None
 
 while extra_text: # Loop until no more extra text
-    voice = ''
+    voice = None
+    vid = None
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
     elif ask_tts == 2:
         voice = get_edge_tts(written_text)
     elif ask_tts == 3:
         voice = get_tt_tts(written_text)
-
-    vid = merge_image_and_audio(slide, voice)
+    try:
+        vid = merge_image_and_audio(slide, voice)
+    except Exception as e:
+        print(e)
     if vid:
         print("Video merged")
         videos.append(vid)
     else:
         print("Failed to merge video. Skipping.")
-    
     slide, written_text, extra_text = write_text_on_image(background_image, extra_text)
 
 vid = merge_image_and_audio(slide, voice)
 
 if vid:
-    print("Final video merged")
     videos.append(vid)
+    print("Final videos merged")
 else:
     print("Failed to merge final video. Exiting.")
     exit()
