@@ -12,23 +12,29 @@ def get_tt_tts(text, speaker="en_us_001"):
             if data.get('data'):
                 # Decode base64-encoded audio data
                 audio_data = base64.b64decode(data['data'])
-                #save_audio(audio_data, output_file_path)
-                return audio_data
+                return audio
             else:
                 print(f"Generation failed: {data.get('error', 'Unknown error')}")
-                return None, None
+                return None
         else:
             print(f"Failed to generate audio: {response.text}")
-            return None, None
+            return None
     except Exception as e:
         print(f"Error generating audio: {e}")
-        return None, None
+        return None
 """
-def save_audio(audio_data, output_file_path):
-    try:
-        with open(output_file_path, "wb") as f:
+try:
+    text = "Hello, how are you?"
+    output_file_path = "output_audio.mp3"
+
+    audio_data = get_tt_tts(text)
+    if audio_data:
+        # Write audio data to a file
+        with open(output_file_path, 'wb') as f:
             f.write(audio_data)
-        print(f"Audio saved successfully as '{output_file_path}'")
-    except Exception as e:
-        print(f"Error saving audio: {e}")
+        print("Audio file saved successfully!")
+    else:
+        print("Failed to generate audio.")
+except Exception as e:
+    print(f"An error occurred: {e}")
 """
