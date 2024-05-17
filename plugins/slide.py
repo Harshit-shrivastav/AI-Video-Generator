@@ -1,6 +1,9 @@
 from PIL import Image, ImageDraw, ImageFont
 
 def generate_background_image(width, height, background_color, border_width, border_color):
+    """
+    Generates a background image with a specified width, height, background color, and border.
+    """
     image = Image.new('RGBA', (width, height), background_color + (255,))
     border_top_bottom = Image.new('RGBA', (width, border_width), border_color + (255,))
     border_left_right = Image.new('RGBA', (border_width, height), border_color + (255,))
@@ -12,7 +15,12 @@ def generate_background_image(width, height, background_color, border_width, bor
 
     return image
 
-def write_text_on_image(background_image, text, font_path="https://github.com/Harshit-shrivastav/ai-video-generator/raw/v2/assets/fonts/RobotoCondensed-Black.ttf", font_size=36, text_color=(0, 0, 0)):
+def write_text_on_image(background_image, text, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0)):
+    """
+    Writes complete sentences on the background image starting from the upper-left corner with a margin of 100 pixels from the edges.
+    The text after the last full stop is not written on the image.
+    Returns the extra text that couldn't be written on the image due to lack of space.
+    """
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
     font = ImageFont.truetype(font_path, size=font_size)
@@ -26,12 +34,12 @@ def write_text_on_image(background_image, text, font_path="https://github.com/Ha
     last_period_index = None
 
     for i, word in enumerate(words):
-        word_width = font.getsize(word)[0]
+        word_width = font.getlength(word)
 
         # Handle long words that don't fit on a single line
         if word_width >= width - 200:
             for char in word:
-                char_width = font.getsize(char)[0]
+                char_width = font.getlength(char)
                 if line_width + char_width >= width - 200:
                     text_y += font_size
                     if text_y >= max_height:
@@ -54,7 +62,7 @@ def write_text_on_image(background_image, text, font_path="https://github.com/Ha
                 break
             line_width = word_width
         else:
-            line_width += word_width + font.getsize(' ')[0]
+            line_width += word_width + font.getlength(' ')
         written_text.append(word)
         draw.text((text_x + line_width - word_width, text_y), word, font=font, fill=text_color)
 
@@ -67,12 +75,11 @@ def write_text_on_image(background_image, text, font_path="https://github.com/Ha
     print(f"Text written on image: {written_text}")
     if extra_text:
         print(f"Extra text: {extra_text}")
-        return background_image, written_text, extra_text
-    else:
-        return background_image, written_text, None
+    return background_image, extra_text
 
 """
-image = Image.open("background_image.jpg")
-output_image, written_text, extra_text = write_text_on_image(image, "Hello, this is a long text to test the function")
-output_image.show()
+background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+output_image, extra_text = write_text_on_image(background_image, '''this is another sentence''')
+output_image.show()  
+output_image.save("output.png")
 """
