@@ -41,11 +41,11 @@ else:
     exit()
 
 videos = []
-extra_text = None
-written_text = None
-slide = None
 
 while extra_text: # Loop until no more extra text
+    extra_text = None
+    written_text = None
+    slide = None
     voice = None
     vid = None
     if ask_tts == 1:
@@ -55,6 +55,7 @@ while extra_text: # Loop until no more extra text
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
+            print("tt voice fetched")
         except Exception as e:
             print(e)
     try:
@@ -70,6 +71,7 @@ while extra_text: # Loop until no more extra text
         videos.append(vid)
     else:
         print("Failed to merge video. Skipping.")
+    
     slide, written_text, extra_text = write_text_on_image(background_image, extra_text)
 
 vid = merge_image_and_audio(slide, voice)
