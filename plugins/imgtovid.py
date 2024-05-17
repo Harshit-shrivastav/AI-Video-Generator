@@ -4,6 +4,8 @@ import tempfile
 import os
 
 def merge_image_and_audio(image_path, audio_data, fps=24):
+    temp_video_path = None
+    temp_audio_path = None
     try:
         temp_audio_path = tempfile.mktemp(suffix=".mp3")
         with open(temp_audio_path, "wb") as audio_file:
@@ -27,16 +29,3 @@ def merge_image_and_audio(image_path, audio_data, fps=24):
             os.remove(temp_audio_path)
         if os.path.exists(temp_video_path):
             os.remove(temp_video_path)
-
-"""
-text = "Hello, this is a test."
-speaker = "en_us_001"
-audio_data = get_tt_tts(text, speaker)
-if audio_data:
-    video_data = merge_image_and_audio("path/to/image.jpg", audio_data)
-    if video_data:
-        # Do something with video_data, such as saving it to a file
-        with open("output_video.mp4", "wb") as output_file:
-            output_file.write(video_data)
-        print("Video saved to output_video.mp4")
-"""
