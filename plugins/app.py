@@ -12,9 +12,10 @@ speaker = None
 
 if ask_tts == 1 or ask_tts == 2:
     speaker = str(input("Enter a speaker name: "))
-
-llm_response = get_llm_response(title)
-
+try:
+    llm_response = get_llm_response(title)
+except Exception as e:
+    print(e)
 if llm_response:
     print("LLM response fetched:", llm_response)
 else:
