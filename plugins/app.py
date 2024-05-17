@@ -34,7 +34,7 @@ slide = None
 extra_text = None
 written_text = None 
 try:
-    slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
+    slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
 except Exception as e:
     print("39", e)
 if slide and written_text:
@@ -69,7 +69,7 @@ while extra_text:
     else:
         print("Slide or voice missing. Skipping.")
 
-    slide, written_text, extra_text = write_text_on_image(background_image, extra_text)
+    slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
 
 if slide and voice:
     final_vid = merge_image_and_audio(slide, voice)
