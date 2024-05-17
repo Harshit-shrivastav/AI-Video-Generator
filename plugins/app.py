@@ -53,10 +53,16 @@ while extra_text: # Loop until no more extra text
     elif ask_tts == 2:
         voice = get_edge_tts(written_text)
     elif ask_tts == 3:
-        voice = get_tt_tts(written_text)
+        try:
+            voice = get_tt_tts(written_text)
+        except Exception as e:
+            print(e)
     try:
-        vid = merge_image_and_audio(slide, voice)
-        print("img and aud merged")
+        if slide and voice:
+            vid = merge_image_and_audio(slide, voice)
+            print("img and aud merged")
+        else:
+            print("slide or voice missing")
     except Exception as e:
         print(e)
     if vid:
