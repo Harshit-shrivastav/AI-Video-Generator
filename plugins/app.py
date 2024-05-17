@@ -6,63 +6,40 @@ from elevenlabs_tts import get_elevenlabs_tts
 from msedge_tts import get_edge_tts
 from model import get_llm_response
 
-title = str(input("Please enter a title to get started: "))
+title = input("Please enter a title to get started: ")
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
 speaker = None
 llm_response = None
 voice = None
 
 if ask_tts == 1 or ask_tts == 2:
-    speaker = str(input("Enter a speaker name: "))
+    speaker = input("Enter a speaker name: ")
+
 try:
     llm_response = get_llm_response(title)
-except Exception as e:
-    print(e)
-if llm_response:
     print("LLM response fetched:", llm_response)
-else:
-    print("Failed to fetch LLM response. Exiting.")
+except Exception as e:
+    print("Failed to fetch LLM response:", e)
     exit()
 
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
-
 if background_image:
     print("Background image fetched")
 else:
     print("Failed to generate background image. Exiting.")
     exit()
-slide = None
-written_text = None 
-extra_text = None 
-try:
-    slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
-except Exception as e:
-    print(e)
 
-if slide:
-    print("Slide fetched")
+slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
+if slide and written_text:
+    print("Slide and written text fetched")
 else:
-    print("Failed to generate slide. Exiting.")
+    print("Failed to generate slide or written text. Exiting.")
     exit()
-if written_text:
-    print("written text", written_text)
-    print("Writen text fetched")
-else:
-    print("Failed to generate slide. Exiting.")
-    exit()
-if extra_text:
-    print("Extra text", extra_text)
-    print("extra text fetched")
-else:
-    print("no extra text")
+
 videos = []
 
-while extra_text: # Loop until no more extra text
-    extra_text = None
-    written_text = None
-    slide = None
+while extra_text: 
     voice = None
-    vid = None
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
     elif ask_tts == 2:
@@ -70,32 +47,32 @@ while extra_text: # Loop until no more extra text
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
-            print("tt voice fetched")
+            print("TikTok voice fetched")
         except Exception as e:
-            print(e)
-    try:
-        if slide and voice:
-            vid = merge_image_and_audio(slide, voice)
-            print("img and aud merged")
-        else:
-            print("slide or voice missing")
-    except Exception as e:
-        print(e)
-    if vid:
-        print("Video merged")
-        videos.append(vid)
-    else:
-        print("Failed to merge video. Skipping.")
+            print("Failed to fetch TikTok voice:", e)
     
+    if slide and voice:
+        vid = merge_image_and_audio(slide, voice)
+        if vid:
+            print("Video merged")
+            videos.append(vid)
+        else:
+            print("Failed to merge video. Skipping.")
+    else:
+        print("Slide or voice missing. Skipping.")
+
     slide, written_text, extra_text = write_text_on_image(background_image, extra_text)
 
-vid = merge_image_and_audio(slide, voice)
-
-if vid:
-    videos.append(vid)
-    print("Final videos merged")
+if slide and voice:
+    final_vid = merge_image_and_audio(slide, voice)
+    if final_vid:
+        videos.append(final_vid)
+        print("Final video merged")
+    else:
+        print("Failed to merge final video. Exiting.")
+        exit()
 else:
-    print("Failed to merge final video. Exiting.")
+    print("Slide or voice missing for final video. Exiting.")
     exit()
 
 join_videos(videos, "results/finalvideo.mp4")
