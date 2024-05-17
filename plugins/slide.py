@@ -1,4 +1,6 @@
+import requests
 from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
 
 def generate_background_image(width, height, background_color, border_width, border_color):
     """
@@ -15,15 +17,26 @@ def generate_background_image(width, height, background_color, border_width, bor
 
     return image
 
-def write_text_on_image(background_image, text, font_path="arial.ttf", font_size=36, text_color=(0, 0, 0)):
+def load_font(font_path, font_size):
+    """
+    Loads a font from a given path. If the path is a URL, it downloads the font first.
+    """
+    if font_path.startswith("http://") or font_path.startswith("https://"):
+        response = requests.get(font_path)
+        font = ImageFont.truetype(BytesIO(response.content), font_size)
+    else:
+        font = ImageFont.truetype(font_path, font_size)
+    return font
+
+def write_text_on_image(background_image, text, font_path="F.ttf", font_size=70, text_color=(0, 0, 0)):
     """
     Writes complete sentences on the background image starting from the upper-left corner with a margin of 100 pixels from the edges.
     The text after the last full stop is not written on the image.
-    Returns the extra text that couldn't be written on the image due to lack of space.
+    Returns the image, the extra text that couldn't be written (or None if there's no extra text), and the text that was written on the image.
     """
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
-    font = ImageFont.truetype(font_path, size=font_size)
+    font = load_font(font_path, font_size)
     text_x = 100
     text_y = 100
     line_width = 0
@@ -70,12 +83,14 @@ def write_text_on_image(background_image, text, font_path="arial.ttf", font_size
         written_text = written_text[:last_period_index]
         remaining_text = words[last_period_index:]
 
-    extra_text = ' '.join(remaining_text)
-    written_text = ' '.join(written_text)
-    print(f"Text written on image: {written_text}")
-    if extra_text:
-        print(f"Extra text: {extra_text}")
-    return background_image, extra_text
+    written_text_str = ' '.join(written_text)
+    if remaining_text:
+        extra_text = ' '.join(remaining_text)
+    else:
+        extra_text = None
+
+    return background_image, extra_text, written_text_str
+
 
 """
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
