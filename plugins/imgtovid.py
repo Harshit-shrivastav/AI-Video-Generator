@@ -7,6 +7,7 @@ from PIL import Image
 def merge_image_and_audio(image_path, audio_data, fps=24):
     temp_video_path = None
     temp_audio_path = None
+    temp_image_path = None
     try:
         # Convert RGBA image to RGB
         image = Image.open(image_path)
@@ -49,4 +50,3 @@ def merge_image_and_audio(image_path, audio_data, fps=24):
             os.remove(temp_audio_path)
         if os.path.exists(temp_video_path):
             os.remove(temp_video_path)
-
