@@ -9,6 +9,7 @@ from model import get_llm_response
 title = str(input("Please enter a title to get started: "))
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
 speaker = None
+llm_response = None
 
 if ask_tts == 1 or ask_tts == 2:
     speaker = str(input("Enter a speaker name: "))
