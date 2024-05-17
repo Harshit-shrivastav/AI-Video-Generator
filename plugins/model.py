@@ -4,7 +4,7 @@ import google.generativeai as genai
 from PIL import Image 
 
 
-genai.configure(api_key="AIzaSyAP3zoLugD3in6sp-anDektbEUpCeVWxos")
+genai.configure(api_key="AIzaSyAGe0LzEjcyRNZCtTMALDlsSRKsHLf_e84")
 
 
 def chatgpt(msg):
