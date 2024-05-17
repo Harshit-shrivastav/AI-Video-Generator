@@ -31,7 +31,7 @@ else:
 
 slide, written_text, extra_text = write_text_on_image(background_image, llm_response)
 if slide and written_text:
-    print("Written text:" written_text)
+    print("Written text:", written_text)
     print("Slide and written text fetched")
 else:
     print("Failed to generate slide or written text. Exiting.")
