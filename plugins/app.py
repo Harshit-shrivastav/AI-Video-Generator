@@ -44,7 +44,17 @@ if slide:
 else:
     print("Failed to generate slide. Exiting.")
     exit()
-
+if written_text:
+    print("written text", written_text)
+    print("Writen text fetched")
+else:
+    print("Failed to generate slide. Exiting.")
+    exit()
+if extra_text:
+    print("Extra text", extra_text)
+    print("extra text fetched")
+else:
+    print("no extra text")
 videos = []
 
 while extra_text: # Loop until no more extra text
