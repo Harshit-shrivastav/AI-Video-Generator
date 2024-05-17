@@ -2,8 +2,9 @@ from moviepy.editor import AudioFileClip, ImageClip, VideoFileClip, concatenate_
 import imageio
 import tempfile
 import os
+from PIL import Image
 
-def merge_image_and_audio(image_path, audio_data, fps=24):
+def merge_image_and_audio(image, audio_data, fps=24):
     temp_audio_path = None
     temp_video_path = None
     
@@ -13,10 +14,16 @@ def merge_image_and_audio(image_path, audio_data, fps=24):
         with open(temp_audio_path, "wb") as audio_file:
             audio_file.write(audio_data)
         
+        # Save the image to a temporary file if it's not a file path
+        if isinstance(image, str):
+            image_path = image
+        else:
+            image_path = tempfile.mktemp(suffix=".jpg")
+            image.save(image_path)
+        
         # Read the image and create an ImageClip
         audio = AudioFileClip(temp_audio_path)
-        image = imageio.imread(image_path)  # Read image as numpy array
-        image_clip = ImageClip(image).set_duration(audio.duration).set_fps(fps)  # Use numpy array
+        image_clip = ImageClip(image_path).set_duration(audio.duration).set_fps(fps)
         
         # Set the audio of the ImageClip
         final_clip = image_clip.set_audio(audio)
