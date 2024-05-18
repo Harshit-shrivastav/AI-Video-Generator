@@ -17,7 +17,7 @@ if ask_tts == 1 or ask_tts == 2:
 
 try:
     llm_response = get_llm_response(title)
-    print("LLM response fetched:", llm_response)
+    #print("LLM response fetched:", llm_response)
 except Exception as e:
     print("Failed to fetch LLM response:", e)
     exit()
