@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Form, UploadFile
-from fastapi.responses import JSONResponse
-from typing import Optional
+import os
 import traceback
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic import BaseModel
+from typing import List, Optional
 from plugins.slide import generate_background_image, write_text_on_image
 from plugins.tiktok_tts import get_tt_tts
 from plugins.merge_vid import merge_videos
