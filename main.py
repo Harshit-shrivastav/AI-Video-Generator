@@ -117,7 +117,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
         print("Voice missing for final video. Exiting.")
         return JSONResponse(content={"error": "Voice missing for final video."}, status_code=500)
 
-    final_video_path = "static/finalvideo.mp4"  # Added to define the final video path
+    final_video_path = "assets/output/finalvideo.mp4"
     try:
         merge_videos(videos, final_video_path)
         print("Final video created successfully!")
