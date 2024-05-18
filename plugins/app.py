@@ -70,7 +70,10 @@ while extra_text:
         print("Slide or voice missing. Skipping.")
 
     slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
-
+    print("Writen text", written_text)
+    if extra_text:
+        print("Extra text", extra_text)
+        
 if slide and voice:
     final_vid = merge_image_and_audio(slide, voice)
     if final_vid:
