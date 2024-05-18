@@ -24,11 +24,11 @@ async def fetch_tts(service_type: int, text: str, speaker: Optional[str]) -> byt
 @app.post("/generate")
 async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Optional[str] = Form(None)):
     try:
-        llm_response = get_llm_response(title, "Your lesson content here")
+        llm_response = get_llm_response(title, "You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.")
     except Exception as e:
         error_message = f"Failed to fetch LLM response: {e}"
         print(error_message)
-        print(traceback.format_exc())  # Added to log detailed error
+        print(traceback.format_exc())  
         return JSONResponse(content={"error": error_message}, status_code=500)
 
     try:
@@ -38,7 +38,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
     except Exception as e:
         error_message = f"Error generating background image: {e}"
         print(error_message)
-        print(traceback.format_exc())  # Added to log detailed error
+        print(traceback.format_exc())  
         return JSONResponse(content={"error": error_message}, status_code=500)
 
     try:
@@ -128,7 +128,6 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
         return JSONResponse(content={"error": error_message}, status_code=500)
 
     return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)  # Added video_path to response
-
 
 @app.get("/")
 async def root():
