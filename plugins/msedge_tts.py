@@ -22,15 +22,8 @@ async def get_edge_tts(text):
             print("Error generating audio using edge_tts:", e)
             raise
 
-    async def run_async(text):
-        try:
-            return await async_generate_audio(text)
-        except Exception as e:
-            print("An error occurred during audio generation:", e)
-            raise
-
     try:
-        return asyncio.run(run_async(text))
+        return await async_generate_audio(text)
     except Exception as e:
-        print("Error generating text to speech:", e)
+        print("An error occurred during audio generation:", e)
         return None
