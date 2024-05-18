@@ -16,8 +16,6 @@ app = FastAPI()
 
 async def fetch_tts(service_type: int, text: str, speaker: Optional[str]) -> bytes:
     if service_type == 1:
-        tts_data = await get_elevenlabs_tts(text, speaker)
-    elif service_type == 2:
         tts_data = await get_edge_tts(text)
     else:
         raise ValueError("Invalid TTS service type")
