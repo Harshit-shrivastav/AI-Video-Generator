@@ -56,7 +56,7 @@ while extra_text:
             print("Failed to fetch TikTok voice:", e)
             voice = None
 
-    if slide and voice:
+    if voice:
         vid = merge_image_and_audio(slide, voice)
         if vid:
             print("Video merged")
