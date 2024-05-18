@@ -49,6 +49,7 @@ while extra_text:
             voice = get_edge_tts(written_text)
         except Exception as e:
             print('53', e)
+            exit()
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
