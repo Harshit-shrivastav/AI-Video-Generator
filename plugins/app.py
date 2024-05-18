@@ -88,9 +88,10 @@ while extra_text:
 
     print("Written text:", written_text)
     print("Extra text:", extra_text)
+
+
 if not slide:
     print("slide not found")
-    return 
     
 if voice:
     final_vid = merge_image_and_audio(slide, voice)
