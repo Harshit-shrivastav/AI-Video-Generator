@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import edge_tts
 from edge_tts import VoicesManager
 
-def get_edge_tts(text, output_file):
+def get_edge_tts(text):
     async def async_generate_audio(text):
         try:
             voices = await VoicesManager.create()
