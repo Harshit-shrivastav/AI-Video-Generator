@@ -1,10 +1,11 @@
 import requests
 import base64
+import asyncio 
 
 ENDPOINT = 'https://tiktok-tts.weilnet.workers.dev'
 TEXT_BYTE_LIMIT = 300
 
-def get_tt_tts(text, speaker="en_us_001"):
+async def get_tt_tts(text, speaker="en_us_001"):
     try:
         response = requests.post(f"{ENDPOINT}/api/generation", json={"text": text, "voice": speaker})
         if response.status_code == 200:
