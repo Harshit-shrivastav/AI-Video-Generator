@@ -40,10 +40,14 @@
                 body: formData
             });
             const result = await response.json();
+            const resultDiv = document.getElementById("result");
+
             if (response.ok) {
-                document.getElementById("result").innerHTML = `<a href="${result.url}" class="btn btn-success">Download Video</a>`;
+                resultDiv.innerHTML = `
+                    <a href="${result.url}" id="downloadButton" class="btn btn-success" download="finalvideo.mp4">Download Video</a>
+                `;
             } else {
-                document.getElementById("result").innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
+                resultDiv.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
             }
         });
     </script>
