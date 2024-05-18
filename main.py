@@ -1,4 +1,5 @@
 import os
+import traceback
 from typing import Optional
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
