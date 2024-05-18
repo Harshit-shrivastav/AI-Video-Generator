@@ -1,23 +1,32 @@
-import os
-import traceback
+from fastapi import FastAPI, Form, UploadFile
+from fastapi.responses import JSONResponse
 from typing import Optional
-from fastapi import FastAPI, Form, HTTPException
-from fastapi.responses import JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
-from plugins.slide import generate_background_image, write_text_on_image
-from plugins.tiktok_tts import get_tt_tts
-from plugins.merge_vid import merge_videos
-from plugins.imgtovid import merge_image_and_audio
-from plugins.elevenlabs_tts import get_elevenlabs_tts
-from plugins.msedge_tts import get_edge_tts
-from plugins.model import get_llm_response
+import traceback
+from your_tts_module import get_elevenlabs_tts, get_edge_tts, get_tt_tts
+from your_slide_module import generate_background_image, write_text_on_image
+from your_video_module import merge_image_and_audio, merge_videos
 
 app = FastAPI()
+
+async def fetch_tts(service_type: int, text: str, speaker: Optional[str]) -> bytes:
+    if service_type == 1:
+        # Call ElevenLabs TTS service API
+        tts_data = await get_elevenlabs_tts(text, speaker)
+    elif service_type == 2:
+        # Call Edge TTS service API
+        tts_data = await get_edge_tts(text, speaker)
+    elif service_type == 3:
+        # Call TikTok TTS service API
+        tts_data = await get_tt_tts(text, speaker)
+    else:
+        raise ValueError("Invalid TTS service type")
+
+    return tts_data
 
 @app.post("/generate")
 async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Optional[str] = Form(None)):
     try:
-        llm_response = get_llm_response(title, "You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.")
+        llm_response = get_llm_response(title, "Your lesson content here")
     except Exception as e:
         error_message = f"Failed to fetch LLM response: {e}"
         print(error_message)
@@ -121,6 +130,11 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
         return JSONResponse(content={"error": error_message}, status_code=500)
 
     return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)  # Added video_path to response
+
+
+@app.get("/")
+async def root():
+    return FileResponse("static/index.html")
 
 if __name__ == "__main__":
     import uvicorn
