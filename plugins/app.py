@@ -8,10 +8,8 @@ from model import get_llm_response
 
 title = input("Please enter a title to get started: ")
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
-speaker = None
-llm_response = None
-voice = None
 
+llm_response = None
 try:
     llm_response = get_llm_response(title)
 except Exception as e:
@@ -19,7 +17,6 @@ except Exception as e:
     exit()
 
 background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-#background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
 if not background_image:
     print("Failed to generate background image. Exiting.")
     exit()
@@ -30,7 +27,8 @@ written_text = None
 try:
     slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
 except Exception as e:
-    print("Error:", e)
+    print("Error writing text on image:", e)
+    exit()
 
 if not slide or not written_text:
     print("Failed to generate slide or written text. Exiting.")
@@ -42,46 +40,40 @@ print("Slide and written text fetched")
 videos = []
 
 while extra_text: 
-    if ask_tts == 1:
-        voice = get_elevenlabs_tts(written_text, speaker)
-    elif ask_tts == 2:
-        try:
+    voice = None
+    try:
+        if ask_tts == 1:
+            voice = get_elevenlabs_tts(written_text, speaker)
+        elif ask_tts == 2:
             voice = get_edge_tts(written_text)
-            if voice:
-                print("got edge")
-            else:
-                print("error in edge voice")
-        except Exception as e:
-            print('53', e)
-            exit()
-    elif ask_tts == 3:
-        try:
+            if not voice:
+                print("Failed to get Edge TTS voice")
+        elif ask_tts == 3:
             voice = get_tt_tts(written_text)
-            if voice:
-                print("got edge")
-            else:
-                print("error in edge voice")
-        except Exception as e:
-            print("Failed to fetch TikTok voice:", e)
-            voice = None
+            if not voice:
+                print("Failed to get TikTok TTS voice")
+    except Exception as e:
+        print(f"Failed to fetch TTS voice: {e}")
 
     if voice:
-        vid = merge_image_and_audio(slide, voice)
-        if vid:
-            print("Video merged")
-            videos.append(vid)
-        else:
-            print("Failed to merge video. Skipping.")
+        try:
+            vid = merge_image_and_audio(slide, voice)
+            if vid:
+                print("Video merged")
+                videos.append(vid)
+            else:
+                print("Failed to merge video. Skipping.")
+        except Exception as e:
+            print(f"Error merging image and audio: {e}")
     else:
-        print("Slide or voice missing. Skipping.")
+        print("Voice missing. Skipping.")
 
-   # background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
     background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-
     try:
         slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
     except Exception as e:
-        print("Error:", e)
+        print("Error writing text on image:", e)
+        break
 
     if not extra_text:
         break
@@ -89,21 +81,29 @@ while extra_text:
     print("Written text:", written_text)
     print("Extra text:", extra_text)
 
-
 if not slide:
-    print("slide not found")
-    
-if voice:
-    final_vid = merge_image_and_audio(slide, voice)
-    if final_vid:
-        videos.append(final_vid)
-        print("Final video merged")
-    else:
-        print("Failed to merge final video. Exiting.")
-        exit()
-else:
-    print("Slide or voice missing for final video. Exiting.")
+    print("Slide not found. Exiting.")
     exit()
 
-merge_videos(videos, "finalvideo.mp4")
-print("Final video created successfully!")
+if voice:
+    try:
+        final_vid = merge_image_and_audio(slide, voice)
+        if final_vid:
+            videos.append(final_vid)
+            print("Final video merged")
+        else:
+            print("Failed to merge final video. Exiting.")
+            exit()
+    except Exception as e:
+        print(f"Error merging final video: {e}")
+        exit()
+else:
+    print("Voice missing for final video. Exiting.")
+    exit()
+
+try:
+    merge_videos(videos, "finalvideo.mp4")
+    print("Final video created successfully!")
+except Exception as e:
+    print(f"Failed to merge videos: {e}")
+    exit()
