@@ -73,7 +73,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
             except Exception as e:
                 error_message = f"Error merging image and audio: {e}"
                 print(error_message)
-                print(traceback.format_exc())  # Added to log detailed error
+                print(traceback.format_exc())  
                 return JSONResponse(content={"error": error_message}, status_code=500)
         else:
             print("Voice missing. Skipping.")
