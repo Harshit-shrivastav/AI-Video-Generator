@@ -47,7 +47,10 @@ while extra_text:
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
     elif ask_tts == 2:
-        voice = get_edge_tts(written_text)
+        try:
+            voice = get_edge_tts(written_text)
+        except Exception as e:
+            print('53', e)
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
