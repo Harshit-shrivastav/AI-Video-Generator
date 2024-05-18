@@ -12,12 +12,6 @@ from plugins.msedge_tts import get_edge_tts
 from plugins.model import get_llm_response
 
 
-# Import your helper functions from your_module
-from your_module import (
-    generate_background_image, write_text_on_image, get_tt_tts,
-    merge_videos, merge_image_and_audio, get_elevenlabs_tts, get_edge_tts, get_llm_response
-)
-
 app = FastAPI()
 
 # Mount the static directory to serve the HTML file and other static assets
