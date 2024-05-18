@@ -9,7 +9,9 @@ from model import get_llm_response
 title = input("Please enter a title to get started: ")
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
 
+speaker = None
 llm_response = None
+
 try:
     llm_response = get_llm_response(title)
 except Exception as e:
@@ -39,7 +41,7 @@ print("Slide and written text fetched")
 
 videos = []
 
-while extra_text: 
+while extra_text:
     voice = None
     try:
         if ask_tts == 1:
@@ -68,6 +70,7 @@ while extra_text:
     else:
         print("Voice missing. Skipping.")
 
+    # Refresh the background image for the next extra_text generation
     background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
     try:
         slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
@@ -81,9 +84,21 @@ while extra_text:
     print("Written text:", written_text)
     print("Extra text:", extra_text)
 
-if not slide:
-    print("Slide not found. Exiting.")
-    exit()
+# Ensure voice is defined for the final slide
+voice = None
+try:
+    if ask_tts == 1:
+        voice = get_elevenlabs_tts(written_text, speaker)
+    elif ask_tts == 2:
+        voice = get_edge_tts(written_text)
+        if not voice:
+            print("Failed to get Edge TTS voice")
+    elif ask_tts == 3:
+        voice = get_tt_tts(written_text)
+        if not voice:
+            print("Failed to get TikTok TTS voice")
+except Exception as e:
+    print(f"Failed to fetch TTS voice: {e}")
 
 if voice:
     try:
