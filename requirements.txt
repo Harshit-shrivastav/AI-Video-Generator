@@ -3,3 +3,4 @@ imageio
 google.generativeai
 edge_tts
 fastapi
+groq
