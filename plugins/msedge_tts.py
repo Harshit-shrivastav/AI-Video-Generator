@@ -1,11 +1,12 @@
 import asyncio
 import random
 import os
+import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import edge_tts
 from edge_tts import VoicesManager
 
-def get_edge_tts(text):
+async def get_edge_tts(text):
     async def async_generate_audio(text):
         try:
             voices = await VoicesManager.create()
