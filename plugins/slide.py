@@ -29,54 +29,47 @@ def write_text_on_image(background_image, text, font_path="https://github.com/Ha
     font = load_font(font_path, font_size)
     text_x = 100
     text_y = 100
-    line_width = 0
+    max_width = width - 200
     max_height = height - 100 - font_size
-    words = text.split()
+    lines = text.split('\n')
     remaining_text = []
-    written_text = []
-    last_period_index = None
 
-    for i, word in enumerate(words):
-        word_width = font.getlength(word)
+    for line in lines:
+        words = line.split()
+        line_width = 0
+        for i, word in enumerate(words):
+            word_width = font.getlength(word)
 
-        # Handle long words that don't fit on a single line
-        if word_width >= width - 200:
-            for char in word:
-                char_width = font.getlength(char)
-                if line_width + char_width >= width - 200:
-                    text_y += font_size
-                    if text_y >= max_height:
-                        remaining_text = words[i:]
-                        break
-                    line_width = char_width
-                else:
-                    line_width += char_width
-                written_text.append(char)
-                draw.text((text_x + line_width - char_width, text_y), char, font=font, fill=text_color)
-            continue
+            # Handle long words that don't fit on a single line
+            if word_width >= max_width:
+                for char in word:
+                    char_width = font.getlength(char)
+                    if line_width + char_width >= max_width:
+                        text_y += font_size
+                        if text_y >= max_height:
+                            remaining_text.append(' '.join(words[i:]))
+                            break
+                        line_width = char_width
+                    else:
+                        line_width += char_width
+                    draw.text((text_x + line_width - char_width, text_y), char, font=font, fill=text_color)
+                continue
 
-        if word.endswith('.'):
-            last_period_index = i + 1
+            if line_width + word_width >= max_width:
+                text_y += font_size
+                if text_y >= max_height:
+                    remaining_text.append(' '.join(words[i:]))
+                    break
+                line_width = word_width
+            else:
+                line_width += word_width + font.getlength(' ')
+            draw.text((text_x + line_width - word_width, text_y), word, font=font, fill=text_color)
+        text_y += font_size
+        if text_y >= max_height:
+            remaining_text.append(' '.join(words))
+            break
 
-        if line_width + word_width >= width - 200:
-            text_y += font_size
-            if text_y >= max_height:
-                remaining_text = words[i:]
-                break
-            line_width = word_width
-        else:
-            line_width += word_width + font.getlength(' ')
-        written_text.append(word)
-        draw.text((text_x + line_width - word_width, text_y), word, font=font, fill=text_color)
-
-    if last_period_index is not None:
-        written_text = written_text[:last_period_index]
-        remaining_text = words[last_period_index:]
-
-    written_text_str = ' '.join(written_text)
-    if remaining_text:
-        extra_text = ' '.join(remaining_text)
-    else:
-        extra_text = None
+    written_text_str = text if not remaining_text else '\n'.join(lines[:-len(remaining_text)])
+    extra_text = '\n'.join(remaining_text) if remaining_text else None
 
     return background_image, extra_text, written_text_str
