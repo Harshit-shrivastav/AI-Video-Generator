@@ -47,12 +47,20 @@ while extra_text:
     elif ask_tts == 2:
         try:
             voice = get_edge_tts(written_text)
+            if voice:
+                print("got edge")
+            else:
+                print("error in edge voice")
         except Exception as e:
             print('53', e)
             exit()
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
+            if voice:
+                print("got edge")
+            else:
+                print("error in edge voice")
         except Exception as e:
             print("Failed to fetch TikTok voice:", e)
             voice = None
@@ -80,8 +88,11 @@ while extra_text:
 
     print("Written text:", written_text)
     print("Extra text:", extra_text)
-
-if slide and voice:
+if not slide:
+    print("slide not found")
+    return 
+    
+if voice:
     final_vid = merge_image_and_audio(slide, voice)
     if final_vid:
         videos.append(final_vid)
