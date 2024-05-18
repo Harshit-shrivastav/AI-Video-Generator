@@ -18,7 +18,8 @@ except Exception as e:
     print("Failed to fetch LLM response:", e)
     exit()
 
-background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+#background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
 if not background_image:
     print("Failed to generate background image. Exiting.")
     exit()
@@ -65,7 +66,9 @@ while extra_text:
     else:
         print("Slide or voice missing. Skipping.")
 
-    background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+   # background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+    background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+
     try:
         slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
     except Exception as e:
