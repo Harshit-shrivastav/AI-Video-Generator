@@ -1,14 +1,15 @@
+import os
+from typing import Optional
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from typing import Optional
-import os
-
-# Import your helper functions from your_module
-from plugins import (
-    generate_background_image, write_text_on_image, get_tt_tts,
-    merge_videos, merge_image_and_audio, get_elevenlabs_tts, get_edge_tts, get_llm_response
-)
+from plugins.slide import generate_background_image, write_text_on_image
+from plugins.tiktok_tts import get_tt_tts
+from plugins.merge_vid import merge_videos
+from plugins.imgtovid import merge_image_and_audio
+from plugins.elevenlabs_tts import get_elevenlabs_tts
+from plugins.msedge_tts import get_edge_tts
+from plugins.model import get_llm_response
 
 app = FastAPI()
 
