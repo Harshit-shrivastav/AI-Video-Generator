@@ -52,7 +52,7 @@ def get_llm_response(user_prompt, system_prompt, image=None):
         except Exception as e:
             print(f"Error generating response with Google AI: {e}, trying with Groq if possible.")
             if GROQ_API_KEY:
-                result = get_groq_response(user_prompt)
+                result = get_groq_response(user_prompt, system_prompt)
                 return result
             else:
                 print("No Groq API key found.")
