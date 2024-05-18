@@ -14,17 +14,11 @@ app = FastAPI()
 
 async def fetch_tts(service_type: int, text: str, speaker: Optional[str]) -> bytes:
     if service_type == 1:
-        # Call ElevenLabs TTS service API
         tts_data = await get_elevenlabs_tts(text, speaker)
     elif service_type == 2:
-        # Call Edge TTS service API
         tts_data = await get_edge_tts(text, speaker)
-    elif service_type == 3:
-        # Call TikTok TTS service API
-        tts_data = await get_tt_tts(text, speaker)
     else:
         raise ValueError("Invalid TTS service type")
-
     return tts_data
 
 @app.post("/generate")
