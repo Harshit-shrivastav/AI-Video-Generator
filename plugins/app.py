@@ -86,5 +86,5 @@ else:
     print("Slide or voice missing for final video. Exiting.")
     exit()
 
-merge_videos(videos, "results/finalvideo.mp4")
+merge_videos(videos, "finalvideo.mp4")
 print("Final video created successfully!")
