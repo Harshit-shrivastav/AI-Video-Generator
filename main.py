@@ -55,7 +55,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
 
     while extra_text:
         try:
-            voice = await fetch_tts(ask_tts, get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."), speaker)
+            voice = await fetch_tts(ask_tts, get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation."), speaker)
         except Exception as e:
             error_message = f"Error generating TTS: {e}"
             print(error_message)
@@ -92,7 +92,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
 
     voice = None
     try:
-        voice = await fetch_tts(ask_tts, get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."), speaker)
+        voice = await fetch_tts(ask_tts, get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation."), speaker)
     except Exception as e:
         error_message = f"Failed to fetch TTS voice: {e}"
         print(error_message)
