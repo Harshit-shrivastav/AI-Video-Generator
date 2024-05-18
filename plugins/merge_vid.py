@@ -1,3 +1,8 @@
+from io import BytesIO
+import numpy as np
+from moviepy.editor import ImageClip, AudioFileClip, CompositeAudioClip, CompositeVideoClip
+
+
 def create_video(image, audio_data, save_path=None, fps=24):
     image_np = np.array(image)
     image_clip = ImageClip(image_np).set_fps(fps)
