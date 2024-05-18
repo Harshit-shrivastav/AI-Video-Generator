@@ -10,7 +10,7 @@ def get_edge_tts(text):
         try:
             voices = await VoicesManager.create()
             voice = voices.find(Locale="en-US")
-            speaker = "en-GB-SoniaNeural"
+            speaker = "en-US-MichelleNeural"
             communicate = edge_tts.Communicate(text, speaker)
             audio_data = b''
             async for chunk in communicate.stream():
