@@ -5,6 +5,7 @@ from imgtovid import merge_image_and_audio
 from elevenlabs_tts import get_elevenlabs_tts
 from msedge_tts import get_edge_tts
 from model import get_llm_response
+ 
 
 title = input("Please enter a title to get started: ")
 ask_tts = int(input("Which TTS service do you want to use?\n1. ElevenLabs \n2. Edge\n3. TikTok: "))
@@ -13,7 +14,7 @@ speaker = None
 llm_response = None
 
 try:
-    llm_response = get_llm_response(title)
+    llm_response = get_llm_response(title, "You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.")
 except Exception as e:
     print("Failed to fetch LLM response:", e)
     exit()
@@ -45,13 +46,13 @@ while extra_text:
     voice = None
     try:
         if ask_tts == 1:
-            voice = get_elevenlabs_tts(written_text, speaker)
+            voice = get_elevenlabs_tts(get_llm_response(written_text, ""), speaker)
         elif ask_tts == 2:
-            voice = get_edge_tts(written_text)
+            voice = get_edge_tts(get_llm_response(written_text, ""))
             if not voice:
                 print("Failed to get Edge TTS voice")
         elif ask_tts == 3:
-            voice = get_tt_tts(written_text)
+            voice = get_tt_tts(get_llm_response(written_text, ""))
             if not voice:
                 print("Failed to get TikTok TTS voice")
     except Exception as e:
@@ -88,13 +89,13 @@ while extra_text:
 voice = None
 try:
     if ask_tts == 1:
-        voice = get_elevenlabs_tts(written_text, speaker)
+        voice = get_elevenlabs_tts(get_llm_response(written_text, ""), speaker)
     elif ask_tts == 2:
-        voice = get_edge_tts(written_text)
+        voice = get_edge_tts(get_llm_response(written_text, ""))
         if not voice:
             print("Failed to get Edge TTS voice")
     elif ask_tts == 3:
-        voice = get_tt_tts(written_text)
+        voice = get_tt_tts(get_llm_response(written_text, ""))
         if not voice:
             print("Failed to get TikTok TTS voice")
 except Exception as e:
