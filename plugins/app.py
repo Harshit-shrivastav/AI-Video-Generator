@@ -17,18 +17,14 @@ if ask_tts == 1 or ask_tts == 2:
 
 try:
     llm_response = get_llm_response(title)
-    #print("LLM response fetched:", llm_response)
 except Exception as e:
     print("Failed to fetch LLM response:", e)
     exit()
 
 background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
-if background_image:
-    print("Background image fetched")
-else:
+if not background_image:
     print("Failed to generate background image. Exiting.")
     exit()
-
 
 slide = None
 extra_text = None
@@ -36,18 +32,18 @@ written_text = None
 try:
     slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
 except Exception as e:
-    print("39", e)
-if slide and written_text:
-    print("Written text:", written_text)
-    print("Slide and written text fetched")
-else:
+    print("Error:", e)
+
+if not slide or not written_text:
     print("Failed to generate slide or written text. Exiting.")
     exit()
+
+print("Written text:", written_text)
+print("Slide and written text fetched")
 
 videos = []
 
 while extra_text: 
-    voice = None
     if ask_tts == 1:
         voice = get_elevenlabs_tts(written_text, speaker)
     elif ask_tts == 2:
@@ -55,10 +51,10 @@ while extra_text:
     elif ask_tts == 3:
         try:
             voice = get_tt_tts(written_text)
-           # print("TikTok voice fetched")
         except Exception as e:
             print("Failed to fetch TikTok voice:", e)
-    
+            voice = None
+
     if slide and voice:
         vid = merge_image_and_audio(slide, voice)
         if vid:
@@ -69,11 +65,18 @@ while extra_text:
     else:
         print("Slide or voice missing. Skipping.")
 
-    slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
-    print("Writen text", written_text)
-    if extra_text:
-        print("Extra text", extra_text)
-        
+    background_image = generate_background_image(1600, 900, (255, 255, 255), 10, (0, 0, 0))
+    try:
+        slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
+    except Exception as e:
+        print("Error:", e)
+
+    if not extra_text:
+        break
+
+    print("Written text:", written_text)
+    print("Extra text:", extra_text)
+
 if slide and voice:
     final_vid = merge_image_and_audio(slide, voice)
     if final_vid:
