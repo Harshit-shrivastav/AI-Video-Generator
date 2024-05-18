@@ -46,13 +46,13 @@ while extra_text:
     voice = None
     try:
         if ask_tts == 1:
-            voice = get_elevenlabs_tts(get_llm_response(written_text, ""), speaker)
+            voice = get_elevenlabs_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."), speaker)
         elif ask_tts == 2:
-            voice = get_edge_tts(get_llm_response(written_text, ""))
+            voice = get_edge_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
             if not voice:
                 print("Failed to get Edge TTS voice")
         elif ask_tts == 3:
-            voice = get_tt_tts(get_llm_response(written_text, ""))
+            voice = get_tt_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
             if not voice:
                 print("Failed to get TikTok TTS voice")
     except Exception as e:
@@ -89,13 +89,13 @@ while extra_text:
 voice = None
 try:
     if ask_tts == 1:
-        voice = get_elevenlabs_tts(get_llm_response(written_text, ""), speaker)
+        voice = get_elevenlabs_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."), speaker)
     elif ask_tts == 2:
-        voice = get_edge_tts(get_llm_response(written_text, ""))
+        voice = get_edge_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
         if not voice:
             print("Failed to get Edge TTS voice")
     elif ask_tts == 3:
-        voice = get_tt_tts(get_llm_response(written_text, ""))
+        voice = get_tt_tts(get_llm_response(written_text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
         if not voice:
             print("Failed to get TikTok TTS voice")
 except Exception as e:
