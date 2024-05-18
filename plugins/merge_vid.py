@@ -1,26 +1,35 @@
+import base64
+import requests
 from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
 import numpy as np
-from moviepy.editor import ImageClip, AudioFileClip, CompositeAudioClip, CompositeVideoClip
+from moviepy.editor import (
+    ImageClip,
+    AudioFileClip,
+    CompositeAudioClip,
+    CompositeVideoClip,
+    concatenate_videoclips,
+    VideoFileClip
+)
 
+def merge_videos(video_data_list, save_path):
+    """
+    Merges a list of video data into a single video.
 
-def merge_image_and_audio(image, audio_data, save_path=None, fps=24):
-    image_np = np.array(image)
-    image_clip = ImageClip(image_np).set_fps(fps)
-    audio_file = "temp_audio.mp3"
-    with open(audio_file, "wb") as f:
-        f.write(audio_data)
-    audio_clip = AudioFileClip(audio_file)
-    image_clip = image_clip.set_duration(audio_clip.duration)
-    video = CompositeVideoClip([image_clip])
-    video.audio = CompositeAudioClip([audio_clip])
-    if save_path:
-        video.write_videofile(save_path, codec='libx264', audio_codec='aac')
-    else:
-        video_buffer = BytesIO()
-        video.write_videofile(video_buffer, codec='libx264', audio_codec='aac')
-        video_data = video_buffer.getvalue()
-        video_buffer.close()
-        return video_data
-    video.close()
-    audio_clip.close()
-    image_clip.close()
+    Args:
+        video_data_list (list): List of video data in bytes.
+        save_path (str): Path to save the final video.
+
+    Returns:
+        None
+    """
+    video_clips = []
+
+    for video_data in video_data_list:
+        video_buffer = BytesIO(video_data)
+        video_clip = VideoFileClip(video_buffer)
+        video_clips.append(video_clip)
+    final_clip = concatenate_videoclips(video_clips)
+    final_clip.write_videofile(save_path, codec='libx264', audio_codec='aac')
+    for clip in video_clips:
+        clip.close()
