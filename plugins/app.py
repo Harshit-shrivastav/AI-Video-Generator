@@ -12,9 +12,6 @@ speaker = None
 llm_response = None
 voice = None
 
-if ask_tts == 1 or ask_tts == 2:
-    speaker = input("Enter a speaker name: ")
-
 try:
     llm_response = get_llm_response(title)
 except Exception as e:
