@@ -125,7 +125,8 @@ async def generate(
         print(error_message)
         return JSONResponse(content={"error": error_message}, status_code=500)
 
-    output_path = "static/finalvideo.mp4"
+   # output_path = "static/finalvideo.mp4"
+    final_video_path = "static/finalvideo.mp4" 
     try:
         merge_videos(videos, output_path)
     except Exception as e:
@@ -134,8 +135,8 @@ async def generate(
         print(traceback.format_exc())
         return JSONResponse(content={"error": error_message}, status_code=500)
 
-    return JSONResponse(content={"url": f"/static/finalvideo.mp4"}, status_code=200)
-
+  #  return JSONResponse(content={"url": f"/static/finalvideo.mp4"}, status_code=200)
+    return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200) 
 @app.get("/")
 async def root():
     return FileResponse("static/index.html")
