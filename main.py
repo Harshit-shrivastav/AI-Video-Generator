@@ -20,11 +20,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def fetch_tts(ask_tts, text, speaker):
     try:
         if ask_tts == 1:
-            return await get_elevenlabs_tts(get_llm_response(text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."), speaker)
+            return await get_elevenlabs_tts(text, speaker)
         elif ask_tts == 2:
-            return await get_edge_tts(get_llm_response(text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
+            return await get_edge_tts(text)
         elif ask_tts == 3:
-            return await get_tt_tts(get_llm_response(text, "You are a very talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Please explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as 'Sure, I can explain,' or any other unrelated remarks. Focus solely on the topic at hand, providing a thorough and comprehensible explanation."))
+            return await get_tt_tts(text)
     except Exception as e:
         raise Exception(f"Failed to fetch TTS voice: {e}")
 
