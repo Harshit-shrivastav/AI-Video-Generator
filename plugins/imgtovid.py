@@ -1,7 +1,8 @@
 from io import BytesIO
 import numpy as np
 from moviepy.editor import ImageClip, AudioFileClip, CompositeAudioClip, CompositeVideoClip
-
+import tempfile
+import os
 
 def merge_image_and_audio(image, audio_data, fps=24, save_path=None):
     # Convert PIL image to numpy array
