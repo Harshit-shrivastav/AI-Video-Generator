@@ -52,8 +52,8 @@ async def generate(
         print(error_message)
         print(traceback.format_exc())
         return JSONResponse(content={"error": error_message}, status_code=500)
-
     try:
+        # Attempt to write text on the image
         slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
         if not slide or not written_text:
             raise ValueError("Failed to generate slide or written text.")
