@@ -12,7 +12,6 @@ from plugins.elevenlabs_tts import get_elevenlabs_tts
 from plugins.msedge_tts import get_edge_tts
 from plugins.model import get_llm_response
 
-
 app = FastAPI()
 
 # Mount the static directory to serve the HTML file and other static assets
@@ -45,17 +44,17 @@ async def generate(
 
     try:
         background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-        if not background_image:
+        if background_image is None:
             raise ValueError("Failed to generate background image.")
     except Exception as e:
         error_message = f"Error generating background image: {e}"
         print(error_message)
         print(traceback.format_exc())
         return JSONResponse(content={"error": error_message}, status_code=500)
+
     try:
-        # Attempt to write text on the image
         slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
-        if not slide or not written_text:
+        if slide is None or written_text is None:
             raise ValueError("Failed to generate slide or written text.")
     except Exception as e:
         error_message = f"Error writing text on image: {e}"
@@ -77,10 +76,9 @@ async def generate(
         if voice:
             try:
                 vid = merge_image_and_audio(slide, voice)
-                if vid:
-                    videos.append(vid)
-                else:
+                if vid is None:
                     raise ValueError("Failed to merge image and audio.")
+                videos.append(vid)
             except Exception as e:
                 error_message = f"Error merging image and audio: {e}"
                 print(error_message)
@@ -89,7 +87,11 @@ async def generate(
 
         try:
             background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+            if background_image is None:
+                raise ValueError("Failed to generate background image.")
             slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
+            if slide is None or written_text is None:
+                raise ValueError("Failed to generate slide or written text.")
         except Exception as e:
             error_message = f"Error writing text on image: {e}"
             print(error_message)
@@ -110,10 +112,9 @@ async def generate(
     if voice:
         try:
             final_vid = merge_image_and_audio(slide, voice)
-            if final_vid:
-                videos.append(final_vid)
-            else:
+            if final_vid is None:
                 raise ValueError("Failed to merge final video.")
+            videos.append(final_vid)
         except Exception as e:
             error_message = f"Error merging final video: {e}"
             print(error_message)
