@@ -1,16 +1,7 @@
-import base64
-import requests
+import tempfile
+import os
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
-from moviepy.editor import (
-    ImageClip,
-    AudioFileClip,
-    CompositeAudioClip,
-    CompositeVideoClip,
-    concatenate_videoclips,
-    VideoFileClip
-)
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 def merge_videos(video_data_list, save_path):
     """
@@ -26,10 +17,13 @@ def merge_videos(video_data_list, save_path):
     video_clips = []
 
     for video_data in video_data_list:
-        video_buffer = BytesIO(video_data)
-        video_clip = VideoFileClip(video_buffer)
+        temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+        temp_video_file.write(video_data)
+        temp_video_file.close()
+        video_clip = VideoFileClip(temp_video_file.name)
         video_clips.append(video_clip)
     final_clip = concatenate_videoclips(video_clips)
     final_clip.write_videofile(save_path, codec='libx264', audio_codec='aac')
     for clip in video_clips:
         clip.close()
+        os.remove(clip.filename)
