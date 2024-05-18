@@ -10,27 +10,27 @@ GOOGLE_API_KEY = "AIzaSyAGe0LzEjcyRNZCtTMALDlsSRKsHLf_e84"
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
 
-def get_groq_response(prompt):
+def get_groq_response(user_prompt, system_prompt):
     client = Groq(api_key=GROQ_API_KEY)
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": "You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.",
+                "content": system_prompt,
             },
             {
                 "role": "user",
-                "content": prompt,
+                "content": user_prompt,
             }
         ],
         model="llama3-8b-8192",
     )
     return chat_completion.choices[0].message.content
 
-def get_llm_response(prompt, image=None):
+def get_llm_response(user_prompt, system_prompt, image=None):
     formatted_prompt = f"""
-    You are a teacher preparing slides for your students. Always explain concepts clearly and in a way that is easy to understand, as if you are presenting directly to them. Do not include any instructions about subtitles, slide images, or point-by-point lists. Ensure that your explanations are detailed and can be used directly to create slides without additional formatting or instructions. Focus solely on providing the content of the lesson.
-    Topic: {prompt}
+    {system_prompt}
+    Topic: {user_prompt}
     Your Answer: 
     """
 
@@ -52,7 +52,7 @@ def get_llm_response(prompt, image=None):
         except Exception as e:
             print(f"Error generating response with Google AI: {e}, trying with Groq if possible.")
             if GROQ_API_KEY:
-                result = get_groq_response(prompt)
+                result = get_groq_response(user_prompt)
                 return result
             else:
                 print("No Groq API key found.")
