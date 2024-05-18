@@ -2,9 +2,13 @@ from fastapi import FastAPI, Form, UploadFile
 from fastapi.responses import JSONResponse
 from typing import Optional
 import traceback
-from your_tts_module import get_elevenlabs_tts, get_edge_tts, get_tt_tts
-from your_slide_module import generate_background_image, write_text_on_image
-from your_video_module import merge_image_and_audio, merge_videos
+from plugins.slide import generate_background_image, write_text_on_image
+from plugins.tiktok_tts import get_tt_tts
+from plugins.merge_vid import merge_videos
+from plugins.imgtovid import merge_image_and_audio
+from plugins.elevenlabs_tts import get_elevenlabs_tts
+from plugins.msedge_tts import get_edge_tts
+from plugins.model import get_llm_response
 
 app = FastAPI()
 
