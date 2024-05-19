@@ -68,6 +68,7 @@
         $(document).ready(function() {
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
+                $('#progress-bar').css('width', '40%');
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
