@@ -84,7 +84,7 @@
                     success: function(response) {
                         if (response.step === 'final_video_merged') {
                             $('#progress-bar').css('width', '80%');
-                            $('#progress-text').text('Final video merging completed...');
+                            $('#progress-text').text('Rendering your video...');
                         } else if (response.step === 'video_ready') {
                             setTimeout(() => {
                                 $('#progress-bar').css('width', '100%');
