@@ -45,7 +45,7 @@
                     <option value="en-US-ChristopherNeural">Christopher - English-US</option>
                     <option value="en-US-EricNeural">Eric - English-US</option>
                     <option value="en-US-GuyNeural">Guy - English-US</option>
-                    <option value="'en-US-JennyNeural">Jenny - English-US</option>
+                    <option value="en-US-JennyNeural">Jenny - English-US</option>
                     <option value="en-US-MichelleNeural">Michelle - English-US</option>
                     <option value="en-IN-NeerjaNeural">Neerja - English-IN</option>
                     <option value="en-IN-PrabhatNeural">Prabhat - English-IN</option>
@@ -86,17 +86,14 @@
                             $('#progress-bar').css('width', '80%');
                             $('#progress-text').text('Final video merging completed...');
                         } else if (response.step === 'video_ready') {
-                            setTimeout(() => {
-                                $('#progress-bar').css('width', '100%');
-                                setTimeout(() => {
-                                    $('#progress-container').hide();
-                                    $('#download-link').attr('href', response.video_path).show();
-                                }, 2000);
-                            }, 0);
+                            $('#progress-bar').css('width', '100%');
+                            $('#progress-text').text('Video ready!');
+                            $('#download-link').attr('href', response.video_path).show();
                         }
                     },
                     error: function(xhr, status, error) {
                         alert('Error: ' + xhr.responseText);
+                        $('#progress-container').hide();
                     }
                 });
             });
