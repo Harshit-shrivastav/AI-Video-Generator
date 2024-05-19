@@ -81,19 +81,19 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    xhr: function() {
-                        var xhr = new window.XMLHttpRequest();
-                        xhr.upload.addEventListener('progress', function(e) {
-                            if (e.lengthComputable) {
-                                var percent = Math.round((e.loaded / e.total) * 100);
-                                $('#progress-bar').css('width', percent + '%');
-                            }
-                        });
-                        return xhr;
-                    },
                     success: function(response) {
-                        $('#progress-text').text('Video generation completed!');
-                        $('#download-link').attr('href', response.video_path).show();
+                        if (response.step === 'final_video_merged') {
+                            $('#progress-bar').css('width', '80%');
+                            $('#progress-text').text('Final video merging completed...');
+                        } else if (response.step === 'video_ready') {
+                            setTimeout(() => {
+                                $('#progress-bar').css('width', '100%');
+                                setTimeout(() => {
+                                    $('#progress-container').hide();
+                                    $('#download-link').attr('href', response.video_path).show();
+                                }, 2000);
+                            }, 0);
+                        }
                     },
                     error: function(xhr, status, error) {
                         alert('Error: ' + xhr.responseText);
