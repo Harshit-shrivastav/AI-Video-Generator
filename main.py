@@ -3,6 +3,7 @@ from fastapi import FastAPI, Form
 from fastapi.responses import JSONResponse, FileResponse
 import os
 from typing import List
+import asyncio
 
 from plugins.slide import generate_background_image, write_text_on_image
 from plugins.merge_vid import merge_videos
@@ -20,7 +21,7 @@ slide_prompt = "give information in as short as possible"
 exp_prompt = "Explain in as short as possible"
 
 
-def create_video_segments(title: str, speaker: str) -> List[str]:
+async def create_video_segments(title: str, speaker: str) -> List[str]:
     try:
         llm_response = get_llm_response(title, slide_prompt)
         background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
@@ -28,7 +29,13 @@ def create_video_segments(title: str, speaker: str) -> List[str]:
         
         videos = []
         while extra_text:
-            voice = await fetch_tts(get_llm_response(written_text, exp_prompt), speaker)
+            #exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
+            voice_text = get_llm_response(written_text, exp_prompt)
+            try:
+                voice = await get_edge_tts(voice_text, speaker)
+            except Exception as e:
+                print(f"Error generating TTS: {e}")
+                continue
             if voice:
                 vid = merge_image_and_audio(slide, voice)
                 if vid:
@@ -36,7 +43,13 @@ def create_video_segments(title: str, speaker: str) -> List[str]:
             background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
             slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
 
-        voice = await fetch_tts(get_llm_response(written_text, exp_prompt), speaker)
+       # exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
+        voice_text = get_llm_response(written_text, exp_prompt)
+        try:
+            voice = await get_edge_tts(voice_text, speaker)
+        except Exception as e:
+            print(f"Error generating TTS: {e}")
+            return videos
         if voice:
             final_vid = merge_image_and_audio(slide, voice)
             if final_vid:
@@ -51,11 +64,11 @@ def create_video_segments(title: str, speaker: str) -> List[str]:
 @app.post("/generate")
 async def generate(title: str = Form(...), speaker: str = Form(...)):
     try:
-        videos = create_video_segments(title, speaker)
+        videos = await create_video_segments(title, speaker)
         if not videos:
             return JSONResponse(content={"error": "Failed to create video segments."}, status_code=500)
         
-        final_video_path = "finalvideo.mp4"
+        final_video_path = "assets/output/finalvideo.mp4"
         merge_videos(videos, final_video_path)
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
     except Exception as e:
