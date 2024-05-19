@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Video Generation</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
-        /* Additional custom styles */
         body {
             background-color: #f8f9fa;
         }
@@ -17,16 +17,6 @@
         }
         .btn-success {
             width: 100%;
-        }
-        @media (min-width: 768px) {
-            .container {
-                max-width: 700px;
-            }
-        }
-        @media (min-width: 992px) {
-            .container {
-                max-width: 900px;
-            }
         }
     </style>
 </head>
@@ -68,7 +58,7 @@
         $(document).ready(function() {
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
-                $('#progress-bar').css('width', '50%'); // Set progress to 50% just after tapping generate button
+                $('#progress-bar').css('width', '50%');
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
@@ -82,13 +72,12 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        if (response.step === 'final_video_merged') {
-                            $('#progress-bar').css('width', '80%');
-                            $('#progress-text').text('Final video merging completed...');
-                        } else if (response.step === 'video_ready') {
+                        if (response.video_path) {
                             $('#progress-bar').css('width', '100%');
                             $('#progress-text').text('Video ready!');
                             $('#download-link').attr('href', response.video_path).show();
+                        } else {
+                            $('#progress-text').text('An error occurred during generation.');
                         }
                     },
                     error: function(xhr, status, error) {
