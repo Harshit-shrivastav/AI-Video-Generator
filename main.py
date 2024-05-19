@@ -5,7 +5,6 @@ from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from plugins.slide import generate_background_image, write_text_on_image
-from plugins.tiktok_tts import get_tt_tts
 from plugins.merge_vid import merge_videos
 from plugins.imgtovid import merge_image_and_audio
 from plugins.elevenlabs_tts import get_elevenlabs_tts
@@ -14,11 +13,11 @@ from plugins.model import get_llm_response
 
 app = FastAPI()
 
-async def fetch_tts(service_type: int, text: str, speaker: Optional[str]) -> bytes:
-    if service_type == 1:
+async def fetch_tts(text: str, speaker: Optional[str]) -> bytes:
+    try:
         tts_data = await get_edge_tts(text)
-    else:
-        raise ValueError("Invalid TTS service type")
+    except Exception as e:
+        print(e)
     return tts_data
 
 @app.post("/generate")
@@ -55,9 +54,7 @@ async def generate(title: str = Form(...), ask_tts: int = Form(...), speaker: Op
 
     while extra_text:
         try:
-            voice = await fetch_tts(ask_tts, get_llm_response(written_text, """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""))
-
-Improve this prompt ."), speaker)
+            voice = await fetch_tts(get_llm_response(written_text, """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""), speaker)
         except Exception as e:
             error_message = f"Error generating TTS: {e}"
             print(error_message)
