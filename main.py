@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Form, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
 import traceback
@@ -20,6 +19,9 @@ from plugins.msedge_tts import get_edge_tts
 from plugins.model import get_llm_response
 
 app = FastAPI()
+
+# Ensure the directory exists
+os.makedirs("root/users/videos", exist_ok=True)
 
 app.mount("/users", StaticFiles(directory="root/users"), name="users")
 
@@ -55,84 +57,139 @@ def send_email(email: str, video_link: str):
         print(f"Failed to send email: {e}")
 
 def delete_file_after_24_hours(file_path: str):
-    time.sleep(86400)  # Sleep for 24 hours
+    time.sleep(24 * 60 * 60)
     try:
         os.remove(file_path)
         print(f"Deleted file: {file_path}")
     except Exception as e:
         print(f"Failed to delete file: {e}")
 
-async def create_video_segments(title: str, speaker: str) -> List[str]:
+@app.post("/generate")
+async def generate(
+    title: str = Form(...), 
+    speaker: str = Form(...), 
+    email: str = Form(...), 
+    background_tasks: BackgroundTasks = BackgroundTasks()
+):
     try:
         llm_response = get_llm_response(title, slide_prompt)
+    except Exception as e:
+        error_message = f"Failed to fetch LLM response: {e}"
+        print(error_message)
+        print(traceback.format_exc())
+        return JSONResponse(content={"error": error_message}, status_code=500)
+
+    try:
         background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+        if not background_image:
+            raise ValueError("Failed to generate background image.")
+    except Exception as e:
+        error_message = f"Error generating background image: {e}"
+        print(error_message)
+        print(traceback.format_exc())
+        return JSONResponse(content={"error": error_message}, status_code=500)
+
+    try:
         slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
-        
-        videos = []
-        while extra_text:
-           # exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
-            voice_text = get_llm_response(written_text, exp_prompt)
+        if not slide or not written_text:
+            raise ValueError("Failed to generate slide or written text.")
+    except Exception as e:
+        error_message = f"Error writing text on image: {e}"
+        print(error_message)
+        print(traceback.format_exc())
+        return JSONResponse(content={"error": error_message}, status_code=500)
+
+    videos = []
+
+    while extra_text:
+        try:
+            voice = await get_edge_tts(written_text, speaker)
+        except Exception as e:
+            error_message = f"Error generating TTS: {e}"
+            print(error_message)
+            print(traceback.format_exc())
+            return JSONResponse(content={"error": error_message}, status_code=500)
+
+        if voice:
             try:
-                voice = await get_edge_tts(voice_text, speaker)
-            except Exception as e:
-                print(f"Error generating TTS: {e}")
-                continue
-            if voice:
                 vid = merge_image_and_audio(slide, voice)
                 if vid:
+                    print("Video merged")
                     videos.append(vid)
-            background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-            slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
+                else:
+                    print("Failed to merge video. Skipping.")
+            except Exception as e:
+                error_message = f"Error merging image and audio: {e}"
+                print(error_message)
+                print(traceback.format_exc())
+                return JSONResponse(content={"error": error_message}, status_code=500)
+        else:
+            print("Voice missing. Skipping.")
 
-       # exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
-        voice_text = get_llm_response(written_text, exp_prompt)
+        background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
         try:
-            voice = await get_edge_tts(voice_text, speaker)
+            slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
         except Exception as e:
-            print(f"Error generating TTS: {e}")
-            return videos
-        if voice:
+            error_message = f"Error writing text on image: {e}"
+            print(error_message)
+            print(traceback.format_exc())
+            break
+
+        if not extra_text:
+            break
+
+    voice = None
+    try:
+        voice = await get_edge_tts(written_text, speaker)
+    except Exception as e:
+        error_message = f"Failed to fetch TTS voice: {e}"
+        print(error_message)
+        print(traceback.format_exc())
+        return JSONResponse(content={"error": error_message}, status_code=500)
+
+    if voice:
+        try:
             final_vid = merge_image_and_audio(slide, voice)
             if final_vid:
                 videos.append(final_vid)
-        
-        return videos
-    except Exception as e:
-        print(f"Error in create_video_segments: {e}")
-        print(traceback.format_exc())
-        return []
+                print("Final video merged")
+                # Update progress to 80%
+                return JSONResponse(content={"message": "Final video merged", "step": "final_video_merged"}, status_code=200)
+            else:
+                print("Failed to merge final video. Exiting.")
+                return JSONResponse(content={"error": "Failed to merge final video."}, status_code=500)
+        except Exception as e:
+            error_message = f"Error merging final video: {e}"
+            print(error_message)
+            print(traceback.format_exc())
+            return JSONResponse(content={"error": error_message}, status_code=500)
+    else:
+        print("Voice missing for final video. Exiting.")
+        return JSONResponse(content={"error": "Voice missing for final video."}, status_code=500)
 
-@app.post("/generate")
-async def generate(background_tasks: BackgroundTasks, title: str = Form(...), speaker: str = Form(...), email: str = Form(...)):
+    video_filename = f"{email.split('@')[0]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+    final_video_path = f"root/users/videos/{video_filename}"
+
     try:
-        videos = await create_video_segments(title, speaker)
-        if not videos:
-            return JSONResponse(content={"error": "Failed to create video segments."}, status_code=500)
+        merge_videos(videos, final_video_path)
+        print("Final video created successfully!")
+        background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
-        email_name_part = email.split("@")[0]
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        video_filename = f"{email_name_part}_{timestamp}.mp4"
-        video_path = f"root/users/video_files_here/{video_filename}"
-        
-        merge_videos(videos, video_path)
+        if email:
+            video_link = f"http://your-domain.com/users/videos/{video_filename}"
+            background_tasks.add_task(send_email, email, video_link)
 
-        download_link = f"http://localhost:8000/users/video_files_here/{video_filename}"
-        background_tasks.add_task(send_email, email, download_link)
-        background_tasks.add_task(delete_file_after_24_hours, video_path)
-        
-        return JSONResponse(content={"message": "Final video created successfully!", "video_path": download_link}, status_code=200)
+        return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path, "step": "video_ready"}, status_code=200)
     except Exception as e:
-        error_message = f"Error in generate endpoint: {e}"
+        error_message = f"Failed to merge videos: {e}"
         print(error_message)
         print(traceback.format_exc())
         return JSONResponse(content={"error": error_message}, status_code=500)
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index.html")
+    return templates.TemplateResponse("index.html", {"request": {}})
 
 if __name__ == "__main__":
-    if not os.path.exists("root/users/video_files_here"):
-        os.makedirs("root/users/video_files_here")
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
