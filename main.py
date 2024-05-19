@@ -68,7 +68,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
         if not videos:
             return JSONResponse(content={"error": "Failed to create video segments."}, status_code=500)
         
-        final_video_path = "assets/output/finalvideo.mp4"
+        final_video_path = "/assets/output/finalvideo.mp4"
         merge_videos(videos, final_video_path)
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
     except Exception as e:
