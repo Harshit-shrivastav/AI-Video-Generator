@@ -14,14 +14,19 @@
                 <input type="text" class="form-control" id="title" name="title" required>
             </div>
             <div class="form-group">
-                <label for="ask_tts">TTS Service</label>
-                <select class="form-control" id="ask_tts" name="ask_tts" required>
-                    <option value="1">Edge</option>
+                <label for="speaker">Speaker</label>
+                <select class="form-control" id="speaker" name="speaker" required>
+                    <option value="en-US-AnaNeural">Ana - English-US</option>
+                    <option value="en-US-ChristopherNeural">Christopher - English-US</option>
+                    <option value="en-US-EricNeural">Eric - English-US</option>
+                    <option value="en-US-GuyNeural">Guy - English-US</option>
+                    <option value="'en-US-JennyNeural">Jenny - English-US</option>
+                    <option value="en-US-MichelleNeural">Michelle - English-US</option>
+                    <option value="en-IN-NeerjaNeural">Neerja - English-IN</option>
+                    <option value="en-IN-PrabhatNeural">Prabhat - English-IN</option>
+                    <option value="hi-IN-MadhurNeural">Madhur - Hindi-IN</option>
+                    <option value="hi-IN-SwaraNeural">Swara - Hindi-IN</option>
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="speaker">Speaker (optional)</label>
-                <input type="text" class="form-control" id="speaker" name="speaker">
             </div>
             <button type="submit" class="btn btn-primary">Generate</button>
         </form>
