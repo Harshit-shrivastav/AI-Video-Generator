@@ -5,6 +5,7 @@ import os
 import traceback
 import shutil
 import smtplib
+from fastapi.staticfiles import StaticFiles
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
