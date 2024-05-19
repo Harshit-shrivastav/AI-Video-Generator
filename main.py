@@ -105,7 +105,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
             if final_vid:
                 videos.append(final_vid)
                 print("Final video merged")
-                return JSONResponse(content={"message": "Final video merged", "step": "final_video_merged"}, status_code=200)
+                #return JSONResponse(content={"message": "Final video merged", "step": "final_video_merged"}, status_code=200)
             else:
                 print("Failed to merge final video. Exiting.")
                 return JSONResponse(content={"error": "Failed to merge final video."}, status_code=500)
@@ -122,7 +122,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
     try:
         merge_videos(videos, final_video_path)
         print("Final video created successfully!")
-       # return JSONResponse(content={"step": "video_ready", "video_path": final_video_path}, status_code=200)
+         #return JSONResponse(content={"step": "video_ready", "video_path": final_video_path}, status_code=200)
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path, "step": "video_ready"}, status_code=200)
     except Exception as e:
         error_message = f"Failed to merge videos: {e}"
