@@ -68,7 +68,7 @@
         $(document).ready(function() {
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
-                $('#progress-bar').css('width', '35%'); // Set progress to 35% just after tapping generate button
+                $('#progress-bar').css('width', '50%'); // Set progress to 50% just after tapping generate button
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
@@ -83,12 +83,16 @@
                     contentType: false,
                     success: function(response) {
                         if (response.step === 'final_video_merged') {
-                            $('#progress-bar').css('width', '100%');
-                            $('#progress-text').text('Final video merging completed...');
-                            $('#download-link').attr('href', response.video_path).show(); // Show download link
-                        } else if (response.step === 'video_ready') {
                             $('#progress-bar').css('width', '80%');
                             $('#progress-text').text('Final video merging completed...');
+                        } else if (response.step === 'video_ready') {
+                            setTimeout(() => {
+                                $('#progress-bar').css('width', '100%');
+                                setTimeout(() => {
+                                    $('#progress-container').hide();
+                                    $('#download-link').attr('href', response.video_path).show();
+                                }, 2000);
+                            }, 0);
                         }
                     },
                     error: function(xhr, status, error) {
