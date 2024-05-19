@@ -17,6 +17,7 @@ async def fetch_tts(text: str, speaker: str) -> bytes:
     try:
         tts_data = await get_edge_tts(text, speaker)
     except Exception as e:
+        print(e)
         raise e
     return tts_data
 
