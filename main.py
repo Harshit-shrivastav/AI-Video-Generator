@@ -21,6 +21,14 @@ async def fetch_tts(text: str, speaker: str) -> bytes:
         raise e
     return tts_data
 
+@app.get("/download-final-video")
+async def download_final_video():
+    final_video_path = "assets/output/finalvideo.mp4"
+    if os.path.exists(final_video_path):
+        return FileResponse(final_video_path, media_type="video/mp4")
+    else:
+        raise HTTPException(status_code=404, detail="Final video not found")
+
 @app.post("/generate")
 async def generate(title: str = Form(...), speaker: str = Form(...)):
     try:
@@ -127,6 +135,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
         print(error_message)
         print(traceback.format_exc())
         return JSONResponse(content={"error": error_message}, status_code=500)
+
 
 @app.get("/")
 async def root():
