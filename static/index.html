@@ -4,10 +4,35 @@
     <title>Video Generation</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+        /* Additional custom styles */
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+        }
+        .progress-container {
+            display: none;
+        }
+        .btn-success {
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+            }
+        }
+        @media (min-width: 992px) {
+            .container {
+                max-width: 900px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Generate Video</h1>
+        <h1 class="text-center">Generate Video</h1>
         <form id="generate-form">
             <div class="form-group">
                 <label for="title">Title</label>
@@ -28,13 +53,13 @@
                     <option value="hi-IN-SwaraNeural">Swara - Hindi-IN</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Generate</button>
+            <button type="submit" class="btn btn-primary btn-block">Generate</button>
         </form>
-        <div id="progress-container" class="mt-3" style="display:none;">
+        <div id="progress-container" class="progress-container mt-3">
             <div class="progress">
                 <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
             </div>
-            <p id="progress-text" class="mt-2">Generating video, please wait...</p>
+            <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
         </div>
         <a id="download-link" href="#" class="btn btn-success mt-3" style="display:none;">Download Video</a>
     </div>
