@@ -1,14 +1,13 @@
 from fastapi import FastAPI, Form, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
-from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import os
 import traceback
 import shutil
 import smtplib
-from fastapi.staticfiles import StaticFiles
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 import threading
 import time
@@ -25,18 +24,10 @@ app = FastAPI()
 os.makedirs("root/users/videos", exist_ok=True)
 
 app.mount("/users", StaticFiles(directory="root/users"), name="users")
+app.mount("/static", StaticFiles(directory="root/static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
-
-#slide_prompt = """You are preparing educational slides for students. Ensure concepts are explained clearly and simply, as if presenting directly to the students. Use bullet points for all information. Do not write paragraphs except for subjects like math where step-by-step explanations are necessary. For theoretical subjects, always use bullet points. Separate each point with '\n' to break the line and '\n\n' to beak the lines two times, means insert the space between lines and use (1,2,3...) or by '*' for bullet signs add make sure to insert bullet signs in starting of each point. For example:"1. This is the first point.\n2. This is another bullet point.\n\n3. And this is another with space between above line and so on."Do not include any instructions about subtitles, slide images, or point-by-point lists. The content provided should be detailed and ready for slide creation without additional formatting or instructions. Focus solely on the lesson content."""
-#exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
-
-slide_prompt = "give information in as short as possible"
-exp_prompt = "Explain in as short as possible"
-
-
-EMAIL_ADDRESS = "your_email@gmail.com"
-EMAIL_PASSWORD = "your_password"
+EMAIL_ADDRESS = "
+EMAIL_PASSWORD = "
 
 def send_email(email: str, video_link: str):
     try:
@@ -73,7 +64,7 @@ async def generate(
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     try:
-        llm_response = get_llm_response(title, slide_prompt)
+        llm_response = get_llm_response(title, """You are preparing educational slides for students. Ensure concepts are explained clearly and simply...""")
     except Exception as e:
         error_message = f"Failed to fetch LLM response: {e}"
         print(error_message)
@@ -189,7 +180,7 @@ async def generate(
 
 @app.get("/")
 async def root():
-    return templates.TemplateResponse("index.html", {"request": {}})
+    return FileResponse("root/static/index.html")
 
 if __name__ == "__main__":
     import uvicorn
