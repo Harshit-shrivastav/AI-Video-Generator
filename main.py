@@ -21,10 +21,9 @@ from plugins.model import get_llm_response
 app = FastAPI()
 
 # Ensure the directory exists
-os.makedirs("root/users/videos", exist_ok=True)
+os.makedirs("users/videos", exist_ok=True)
 
-app.mount("/users", StaticFiles(directory="root/users"), name="users")
-app.mount("/static", StaticFiles(directory="root/static"), name="static")
+app.mount("/users", StaticFiles(directory="users"), name="users")
 
 EMAIL_ADDRESS = "
 EMAIL_PASSWORD = "
@@ -60,7 +59,7 @@ def delete_file_after_24_hours(file_path: str):
 async def generate(
     title: str = Form(...), 
     speaker: str = Form(...), 
-    email: str = Form(...), 
+    email: str = Form(None), 
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     try:
@@ -145,7 +144,6 @@ async def generate(
             if final_vid:
                 videos.append(final_vid)
                 print("Final video merged")
-                # Update progress to 80%
                 return JSONResponse(content={"message": "Final video merged", "step": "final_video_merged"}, status_code=200)
             else:
                 print("Failed to merge final video. Exiting.")
@@ -160,7 +158,7 @@ async def generate(
         return JSONResponse(content={"error": "Voice missing for final video."}, status_code=500)
 
     video_filename = f"{email.split('@')[0]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
-    final_video_path = f"root/users/videos/{video_filename}"
+    final_video_path = f"users/videos/{video_filename}"
 
     try:
         merge_videos(videos, final_video_path)
@@ -180,7 +178,7 @@ async def generate(
 
 @app.get("/")
 async def root():
-    return FileResponse("root/static/index.html")
+    return FileResponse("static/index.html")
 
 if __name__ == "__main__":
     import uvicorn
