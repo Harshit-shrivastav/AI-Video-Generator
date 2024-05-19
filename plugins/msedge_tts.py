@@ -1,17 +1,13 @@
 import asyncio
 import random
 import os
-import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import edge_tts
 from edge_tts import VoicesManager
 
-async def get_edge_tts(text):
-    async def async_generate_audio(text):
+async def get_edge_tts(text: str, speaker: str) -> bytes:
+    async def async_generate_audio(text: str, speaker: str) -> bytes:
         try:
-            voices = await VoicesManager.create()
-            voice = voices.find(Locale="en-US")
-            speaker = "en-US-MichelleNeural"
             communicate = edge_tts.Communicate(text, speaker)
             audio_data = b''
             async for chunk in communicate.stream():
@@ -23,7 +19,7 @@ async def get_edge_tts(text):
             raise
 
     try:
-        return await async_generate_audio(text)
+        return await async_generate_audio(text, speaker)
     except Exception as e:
         print("An error occurred during audio generation:", e)
         return None
