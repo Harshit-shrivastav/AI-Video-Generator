@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Form
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import os
 from typing import List
 import traceback
@@ -63,7 +64,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
         
         final_video_path = "assets/output/finalvideo.mp4"
         merge_videos(videos, final_video_path)
-        return JSONResponse(content={"message": "Final video created successfully!", "video_path": f"/{final_video_path}"}, status_code=200)
+        return JSONResponse(content={"message": "Final video created successfully!", "video_path": f"/assets/output/finalvideo.mp4"}, status_code=200)
     except Exception as e:
         error_message = f"Error in generate endpoint: {e}"
         print(error_message)
