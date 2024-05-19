@@ -117,7 +117,7 @@ async def generate(title: str = Form(...), speaker: str = Form(...)):
         print("Voice missing for final video. Exiting.")
         return JSONResponse(content={"error": "Voice missing for final video."}, status_code=500)
 
-    final_video_path = "/assets/output/finalvideo.mp4"
+    final_video_path = "assets/output/finalvideo.mp4"
     try:
         merge_videos(videos, final_video_path)
         print("Final video created successfully!")
