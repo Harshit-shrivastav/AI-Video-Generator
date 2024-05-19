@@ -82,28 +82,23 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        if (response.step === 'video_ready') {
+                        if (response.step === 'final_video_merged') {
                             $('#progress-bar').css('width', '80%');
-                            $('#progress-text').text('Rendering your video...');
+                            $('#progress-text').text('Final video merging completed...');
+                        } else if (response.step === 'video_ready') {
                             setTimeout(() => {
                                 $('#progress-bar').css('width', '100%');
                                 setTimeout(() => {
                                     $('#progress-container').hide();
                                     $('#download-link').attr('href', response.video_path).show();
                                 }, 2000);
-                            }, 2000);
+                            }, 0);
                         }
                     },
                     error: function(xhr, status, error) {
                         alert('Error: ' + xhr.responseText);
                     }
                 });
-            });
-
-            $('#download-link').click(function(event) {
-                event.preventDefault();
-                var downloadUrl = $(this).attr('href');
-                window.location.href = downloadUrl; // Trigger download
             });
         });
     </script>
