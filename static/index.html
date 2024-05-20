@@ -2,114 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Generation</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f8f9fa;
         }
         .container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 300px;
+            max-width: 600px;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
-        }
-        input {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #progress-container {
-            width: 100%;
-            background-color: #ccc;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-        #progress-bar {
-            width: 0%;
-            height: 1rem;
-            background-color: #4CAF50;
-            animation: progress-animation 2s linear infinite;
-        }
-        @keyframes progress-animation {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        .hidden {
+        .progress-container {
             display: none;
+        }
+        .btn-success {
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Generate Your Educational Video</h1>
-        <form id="video-form" method="post" action="/generate" enctype="multipart/form-data">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required>
-            <label for="speaker">Speaker:</label>
-            <input type="text" id="speaker" name="speaker" required>
-            <label for="email">Email (Optional):</label>
-            <input type="email" id="email" name="email">
-            <button type="submit">Generate Video</button>
+    <div class="container mt-5">
+        <h1 class="text-center">Generate Video</h1>
+        <form id="generate-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="speaker">Speaker</label>
+                <select class="form-control" id="speaker" name="speaker" required>
+                    <option value="en-US-AnaNeural">Ana - English-US</option>
+                    <option value="en-US-ChristopherNeural">Christopher - English-US</option>
+                    <option value="en-US-EricNeural">Eric - English-US</option>
+                    <option value="en-US-GuyNeural">Guy - English-US</option>
+                    <option value="en-US-JennyNeural">Jenny - English-US</option>
+                    <option value="en-US-MichelleNeural">Michelle - English-US</option>
+                    <option value="en-IN-NeerjaNeural">Neerja - English-IN</option>
+                    <option value="en-IN-PrabhatNeural">Prabhat - English-IN</option>
+                    <option value="hi-IN-MadhurNeural">Madhur - Hindi-IN</option>
+                    <option value="hi-IN-SwaraNeural">Swara - Hindi-IN</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="email">Email (optional)</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Generate</button>
         </form>
-        <p>By entering your email you will receive a download link when it is ready and you can safely close the browser session.</p>
-        <div id="progress-container" class="hidden">
-            <div id="progress-bar"></div>
+        <div id="progress-container" class="progress-container mt-3">
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
         </div>
-        <div id="message-container"></div>
+        <a id="download-link" href="#" class="btn btn-success mt-3" style="display:none;">Download Video</a>
+       <p>By entering your email you will receive a download link when it is ready and you can safely close the browser session.</p>
     </div>
+
     <script>
-        document.getElementById('video-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            document.getElementById('progress-container').classList.remove('hidden');
-            const response = await fetch('/generate', {
-                method: 'POST',
-                body: formData,
+        $(document).ready(function() {
+            $('#generate-form').submit(function(event) {
+                event.preventDefault();
+                $('#progress-bar').css('width', '50%');
+                $('#progress-container').show();
+                $('#download-link').hide();
+                $('#progress-text').text('Generating video, please wait...');
+
+                var formData = new FormData($('#generate-form')[0]);
+
+                $.ajax({
+                    url: '/generate',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.video_path) {
+                            $('#progress-bar').css('width', '100%');
+                            $('#progress-text').text('Video ready!');
+                            $('#download-link').attr('href', response.video_path).show();
+                        } else {
+                            $('#progress-text').text('An error occurred during generation.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error: ' + xhr.responseText);
+                        $('#progress-container').hide();
+                    }
+                });
             });
-            const result = await response.json();
-            document.getElementById('progress-container').classList.add('hidden');
-            const messageContainer = document.getElementById('message-container');
-            if (response.ok) {
-                messageContainer.innerHTML = `<p>${result.message}</p><a href="${result.video_path}" download>Download Video</a>`;
-            } else {
-                messageContainer.innerHTML = `<p>Error: ${result.detail}</p>`;
-            }
         });
     </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
