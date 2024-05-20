@@ -126,6 +126,11 @@ async def generate(
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         traceback.print_exc()
+        if email:
+            try:
+                send_email(email, "An error occurred while generating your video file, please generate it again.")
+            except Exception as e:
+                print("An error occurred in sending email:", e)
         raise HTTPException(status_code=500, detail="An error occurred during video generation.")
 
 @app.get("/")
