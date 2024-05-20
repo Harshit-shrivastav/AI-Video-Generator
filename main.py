@@ -117,7 +117,10 @@ async def generate(
         if email:
             video_link = f"{DOMAIN}/{final_video_path}"
             #background_tasks.add_task(send_email, email, video_link)
-            send_email(email, video_link)
+            try:
+                send_email(email, video_link)
+            except Exception as e:
+                print("An error occurred in sending email:", e)
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
     
     except Exception as e:
