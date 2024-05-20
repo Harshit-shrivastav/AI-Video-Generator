@@ -2,27 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Generation</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
+            color: #343a40;
         }
         .container {
             max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .progress-container {
-            display: none;
-        }
-        .btn-success {
+        .btn-custom {
             width: 100%;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+        .btn-success-custom {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+            width: 100%;
+        }
+        .btn-success-custom:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #495057;
+        }
+        .text-muted {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .progress-bar-custom {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            animation: progress-bar-stripes 2s linear infinite;
+        }
+        .progress-bar-custom-animated {
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+        @keyframes progress-bar-stripes {
+            from { background-position: 1rem 0; }
+            to { background-position: 0 0; }
         }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Generate Video</h1>
+        <h1 class="text-center mb-4">Generate Video</h1>
         <form id="generate-form">
             <div class="form-group">
                 <label for="title">Title</label>
@@ -47,23 +87,24 @@
                 <label for="email">Email (optional)</label>
                 <input type="email" class="form-control" id="email" name="email">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Generate</button>
+            <button type="submit" class="btn btn-custom btn-block" id="generate-button">Generate</button>
         </form>
         <div id="progress-container" class="progress-container mt-3">
             <div class="progress">
-                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
+                <div id="progress-bar" class="progress-bar progress-bar-custom progress-bar-striped progress-bar-custom-animated" role="progressbar" style="width: 0%;"></div>
             </div>
             <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
         </div>
-        <a id="download-link" href="#" class="btn btn-success mt-3" style="display:none;">Download Video</a>
-       <p>By entering your email you will receive a download link when it is ready and you can safely close the browser session.</p>
+        <a id="download-link" href="#" class="btn btn-success-custom mt-3" style="display:none;">Download Video</a>
+        <p class="text-muted text-center mt-3">By entering your email, you will receive a download link when it is ready, and you can safely close the browser session.</p>
     </div>
 
     <script>
         $(document).ready(function() {
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
-                $('#progress-bar').css('width', '50%');
+                $('#generate-button').hide();
+                $('#progress-bar').css('width', '35%');
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
@@ -84,10 +125,15 @@
                         } else {
                             $('#progress-text').text('An error occurred during generation.');
                         }
+                        $('#generate-button').show();
+                        setTimeout(function() {
+                            $('#progress-container').hide();
+                        }, 2000);
                     },
                     error: function(xhr, status, error) {
                         alert('Error: ' + xhr.responseText);
                         $('#progress-container').hide();
+                        $('#generate-button').show();
                     }
                 });
             });
