@@ -68,7 +68,7 @@ python3 -m main
 
 4. Click "Generate Video" to start. 🎬
 
-5. Wait for the video to be created. You'll get a success message with the video path (and an email if you provided one). 📨
+5. Wait for the video to be created. You'll get a success message with the video link (and an email if you provided one). 📨
 
 6. Click "Download Video" to get your video.
 
