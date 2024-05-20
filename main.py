@@ -32,8 +32,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # SMTP Email Configuration
-EMAIL_ADDRESS = "your_email@gmail.com"
-EMAIL_PASSWORD = "your_password"
+EMAIL_ADDRESS = os.environ.get('VARIABLE_NAME', 'Email_here')
+EMAIL_PASSWORD = os.environ.get('VARIABLE_NAME', 'Password')
 
 def send_email(email: str, video_link: str):
     try:
