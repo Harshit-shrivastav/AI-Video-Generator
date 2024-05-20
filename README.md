@@ -47,8 +47,8 @@ pip install -r requirements.txt
 
 Here are the variables you need to define before using the AI Video Generator:
 
-- `EMAIL_ADDRESS`: Your Email address for SMTP
-- `EMAIL_PASSWORD`: You Password For SMTP
+- `EMAIL_ADDRESS`: Your Gmail address for SMTP
+- `EMAIL_PASSWORD`: You Gmail app Password For SMTP
 - `GOOGLE_API_KEY`: Gemini API Key
 - `GROQ_API_KEY`: Groq API Key(Optional if Gemini is working in your region)
 ## 🚀 Usage
