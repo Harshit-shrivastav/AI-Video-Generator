@@ -58,6 +58,9 @@
             from { background-position: 1rem 0; }
             to { background-position: 0 0; }
         }
+        .progress-container {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -104,7 +107,7 @@
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
                 $('#generate-button').hide();
-                $('#progress-bar').css('width', '35%');
+                $('#progress-bar').css('width', '50%');
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
