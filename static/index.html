@@ -49,18 +49,14 @@
         }
         .progress-bar-custom {
             background: linear-gradient(45deg, #17a2b8, #138496);
-            animation: fill-bar 2s linear infinite, progress-bar-stripes 1s linear infinite;
+            animation: progress-bar-stripes 2s linear infinite;
+        }
+        .progress-bar-custom-animated {
+            animation: progress-bar-stripes 1s linear infinite;
         }
         @keyframes progress-bar-stripes {
             from { background-position: 1rem 0; }
             to { background-position: 0 0; }
-        }
-        @keyframes fill-bar {
-            0% { width: 0%; }
-            25% { width: 25%; }
-            50% { width: 50%; }
-            75% { width: 75%; }
-            100% { width: 100%; }
         }
         .progress-container {
             display: none;
@@ -98,7 +94,7 @@
         </form>
         <div id="progress-container" class="progress-container mt-3">
             <div class="progress">
-                <div id="progress-bar" class="progress-bar progress-bar-custom progress-bar-striped" role="progressbar" style="width: 0%;"></div>
+                <div id="progress-bar" class="progress-bar progress-bar-custom progress-bar-striped progress-bar-custom-animated" role="progressbar" style="width: 0%;"></div>
             </div>
             <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
         </div>
@@ -111,8 +107,8 @@
             $('#generate-form').submit(function(event) {
                 event.preventDefault();
                 $('#generate-button').hide();
+                $('#progress-bar').css('width', '40%');
                 $('#progress-container').show();
-                $('#progress-bar').css('width', '0%');
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
 
