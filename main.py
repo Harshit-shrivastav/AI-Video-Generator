@@ -101,8 +101,7 @@ async def generate(
         video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hashlib.md5(hash_input).hexdigest()}.mp4"
         final_video_path = f"users/videos/{video_filename}"
         merge_videos(videos, final_video_path)
-        delete_file_after_24_hours(final_video_path)
-        #background_tasks.add_task(delete_file_after_24_hours, final_video_path)
+        background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
         logger.info("Video generation completed successfully.")
         
