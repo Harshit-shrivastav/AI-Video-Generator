@@ -101,16 +101,15 @@ async def generate(
         video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hashlib.md5(hash_input).hexdigest()}.mp4"
         final_video_path = f"users/videos/{video_filename}"
         merge_videos(videos, final_video_path)
-        
-        background_tasks.add_task(delete_file_after_24_hours, final_video_path)
+        delete_file_after_24_hours(final_video_path)
+        #background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
         logger.info("Video generation completed successfully.")
         
         if email:
             video_link = f"http://your-domain.com/{final_video_path}"
+            #background_tasks.add_task(send_email, email, video_link)
             send_email(email, video_link)
-            background_tasks.add_task(send_email, email, video_link)
-        
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
     
     except Exception as e:
