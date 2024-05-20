@@ -4,8 +4,8 @@ from PIL import Image
 import google.generativeai as genai
 from groq import Groq
 
-GROQ_API_KEY = "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"
-GOOGLE_API_KEY = "AIzaSyAGe0LzEjcyRNZCtTMALDlsSRKsHLf_e84"
+GROQ_API_KEY = os.environ.get('VARIABLE_NAME', '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')
+GOOGLE_API_KEY = os.environ.get('VARIABLE_NAME', 'AIzaSyAGe0LzEjcyRNZCtTMALDlsSRKsHLf_e84')
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
