@@ -80,24 +80,6 @@
                             $('#progress-bar').css('width', '100%');
                             $('#progress-text').text('Video ready!');
                             $('#download-link').attr('href', response.video_path).show();
-
-                            const email = $('#email').val();
-                            if (email) {
-                                $.ajax({
-                                    url: '/update-email',
-                                    type: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify({ email: email, video_path: response.video_path }),
-                                    success: function(emailResponse) {
-                                        if (emailResponse.message) {
-                                            console.log('Email successfully updated.');
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.log('Error updating email: ' + xhr.responseText);
-                                    }
-                                });
-                            }
                         } else {
                             $('#progress-text').text('An error occurred during generation.');
                         }
