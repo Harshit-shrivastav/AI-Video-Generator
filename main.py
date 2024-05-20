@@ -104,36 +104,18 @@ async def generate(
         
         background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
+        logger.info("Video generation completed successfully.")
+        
         if email:
             video_link = f"http://your-domain.com/{final_video_path}"
             background_tasks.add_task(send_email, email, video_link)
         
-        logger.info("Video generation completed successfully.")
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
     
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred during video generation.")
-
-@app.post("/update-email")
-async def update_email(request: Request):
-    try:
-        data = await request.json()
-        email = data.get('email')
-        video_path = data.get('video_path')
-        if not email or not video_path:
-            raise HTTPException(status_code=400, detail="Email and video path are required.")
-        
-        video_link = f"http://your-domain.com/{video_path}"
-        
-        send_email(email, video_link)
-        
-        return JSONResponse(content={"message": "Email updated and notification sent successfully."}, status_code=200)
-    except Exception as e:
-        logger.error(f"An error occurred while updating email: {e}")
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred while updating email.")
 
 @app.get("/")
 async def root():
