@@ -2,35 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Generation</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         .container {
             max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        select:hover,
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            border-color: #007bff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
         .progress-container {
             display: none;
+            margin-top: 20px;
         }
-        .btn-success {
+        .progress {
             width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #007bff;
+            transition: width 0.5s ease;
+        }
+        #progress-text {
+            margin-top: 10px;
+            text-align: center;
+        }
+        #download-link {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        #download-link:hover {
+            background-color: #218838;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 10px;
+            }
+            input[type="text"],
+            input[type="email"],
+            select,
+            button {
+                padding: 8px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Generate Video</h1>
+    <div class="container">
+        <h1>Generate Video</h1>
         <form id="generate-form">
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+                <input type="text" id="title" name="title" required>
             </div>
             <div class="form-group">
                 <label for="speaker">Speaker</label>
-                <select class="form-control" id="speaker" name="speaker" required>
+                <select id="speaker" name="speaker" required>
                     <option value="en-US-AnaNeural">Ana - English-US</option>
                     <option value="en-US-ChristopherNeural">Christopher - English-US</option>
                     <option value="en-US-EricNeural">Eric - English-US</option>
@@ -45,19 +141,20 @@
             </div>
             <div class="form-group">
                 <label for="email">Email (optional)</label>
-                <input type="email" class="form-control" id="email" name="email">
+                <input type="email" id="email" name="email">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Generate</button>
+            <button type="submit">Generate</button>
         </form>
-        <div id="progress-container" class="progress-container mt-3">
+        <div id="progress-container" class="progress-container">
             <div class="progress">
-                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
+                <div id="progress-bar" class="progress-bar"></div>
             </div>
-            <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
+            <p id="progress-text">Generating video, please wait...</p>
         </div>
-        <a id="download-link" href="#" class="btn btn-success mt-3" style="display:none;">Download Video</a>
+        <a id="download-link" href="#">Download Video</a>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#generate-form').submit(function(event) {
@@ -85,14 +182,11 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Error: ' + xhr.responseText);
-                        $('#progress-container').hide();
+                        $('#progress-text').text('An error occurred during generation.');
                     }
                 });
             });
         });
     </script>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
