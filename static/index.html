@@ -85,17 +85,7 @@
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
 
-                setTimeout(function() {
-                    $('#email-modal').modal('show');
-                }, 5000);
-            });
-
-            $('#submit-email').click(function() {
-                email = $('#email').val();
-                $('#email-modal').modal('hide');
-
                 var formData = new FormData($('#generate-form')[0]);
-                formData.append('email', email);
 
                 $.ajax({
                     url: '/generate',
@@ -115,6 +105,30 @@
                     error: function(xhr, status, error) {
                         alert('Error: ' + xhr.responseText);
                         $('#progress-container').hide();
+                    }
+                });
+
+                setTimeout(function() {
+                    $('#email-modal').modal('show');
+                }, 5000);
+            });
+
+            $('#submit-email').click(function() {
+                email = $('#email').val();
+                $('#email-modal').modal('hide');
+
+                $.ajax({
+                    url: '/update-email',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ email: email }),
+                    success: function(response) {
+                        if (response.message) {
+                            console.log('Email successfully updated.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error updating email: ' + xhr.responseText);
                     }
                 });
             });
