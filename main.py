@@ -5,7 +5,7 @@ import traceback
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import FastAPI, Form, BackgroundTasks, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
