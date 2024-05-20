@@ -2,6 +2,11 @@ import requests
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import numpy as np
+import os
+
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+font_path = os.path.join(current_script_dir, '..', 'assets', 'fonts', 'RobotoCondensed-Black.ttf')
+FONT_PATH = os.path.normpath(font_path)
 
 def generate_background_image(width, height, background_color, border_width, border_color):
     image = Image.new('RGBA', (width, height), background_color + (255,))
@@ -23,7 +28,7 @@ def load_font(font_path, font_size):
         font = ImageFont.truetype(font_path, font_size)
     return font
 
-def write_text_on_image(background_image, text, font_path="https://github.com/Harshit-shrivastav/ai-video-generator/raw/v2/assets/fonts/RobotoCondensed-Black.ttf", font_size=48, text_color=(0, 0, 0)):
+def write_text_on_image(background_image, text, font_path=FONT_PATH, font_size=48, text_color=(0, 0, 0)):
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
     font = load_font(font_path, font_size)
