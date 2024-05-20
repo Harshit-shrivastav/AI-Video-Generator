@@ -84,7 +84,7 @@ Here are some features that i will implement in future (You can also contribute)
 
 - [ ] Adding support for Images in slides
 - [ ] Adding Title on Video slide
-- [ ] Adding more formatting on Video Slides
+- [ ] Providing chat history to LLM Model each time on generation of new slide in a video.
 - [ ] Fix bugs in slide generation(if any)
 
 ## 🤝 Contributing
