@@ -35,8 +35,14 @@ logger = logging.getLogger(__name__)
 EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'Email_here')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'Password')
 
+# System Prompt
 slide_prompt = """You are preparing educational slides for students. Ensure concepts are explained clearly and simply, as if presenting directly to the students. Use bullet points for all information. Do not write paragraphs except for subjects like math where step-by-step explanations are necessary. For theoretical subjects, always use bullet points. Separate each point with '\n' to break the line and '\n\n' to beak the lines two times, means insert the space between lines and use (1,2,3...) or by '*' for bullet signs add make sure to insert bullet signs in starting of each point. For example:"1. This is the first point.\n2. This is another bullet point.\n\n3. And this is another with space between above line and so on."Do not include any instructions about subtitles, slide images, or point-by-point lists. The content provided should be detailed and ready for slide creation without additional formatting or instructions. Focus solely on the lesson content."""
 exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
+
+# Domain and port 
+DOMAIN = os.environ.get('DOMAIN', 'http://127.0.0.1:8080')
+PORT = os.environ.get('PORT', 8000)
+
 
 def send_email(email: str, video_link: str):
     try:
@@ -109,7 +115,7 @@ async def generate(
         logger.info("Video generation completed successfully.")
         
         if email:
-            video_link = f"http://your-domain.com/{final_video_path}"
+            video_link = f"{DOMAIN}/{final_video_path}"
             #background_tasks.add_task(send_email, email, video_link)
             send_email(email, video_link)
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
@@ -125,4 +131,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
