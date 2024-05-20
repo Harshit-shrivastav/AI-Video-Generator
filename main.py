@@ -65,9 +65,9 @@ def delete_file_after_24_hours(file_path: str):
 
 @app.post("/generate")
 async def generate(
+    background_tasks: BackgroundTasks,
     title: str = Form(...), 
-    speaker: str = Form(...), 
-    background_tasks: BackgroundTasks
+    speaker: str = Form(...)
 ):
     try:
         logger.info("Generating video started.")
