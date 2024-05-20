@@ -5,9 +5,9 @@ import traceback
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import List
+from typing import List, Optional
 
-from fastapi import FastAPI, Form, BackgroundTasks, HTTPException
+from fastapi import FastAPI, Form, BackgroundTasks, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import logging
@@ -67,8 +67,7 @@ def delete_file_after_24_hours(file_path: str):
 async def generate(
     title: str = Form(...), 
     speaker: str = Form(...), 
-    email: str = Form(None), 
-    background_tasks: BackgroundTasks = BackgroundTasks()
+    background_tasks: BackgroundTasks
 ):
     try:
         logger.info("Generating video started.")
@@ -96,15 +95,11 @@ async def generate(
             else:
                 raise HTTPException(status_code=500, detail="Failed to merge final video.")
         
-        video_filename = f"{email.split('@')[0]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+        video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
         final_video_path = f"users/videos/{video_filename}"
         merge_videos(videos, final_video_path)
         
         background_tasks.add_task(delete_file_after_24_hours, final_video_path)
-        
-        if email:
-            video_link = f"http://your-domain.com/users/videos/{video_filename}"
-            background_tasks.add_task(send_email, email, video_link)
         
         logger.info("Video generation completed successfully.")
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
@@ -113,6 +108,25 @@ async def generate(
         logger.error(f"An error occurred: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred during video generation.")
+
+@app.post("/update-email")
+async def update_email(request: Request):
+    try:
+        data = await request.json()
+        email = data.get('email')
+        if not email:
+            raise HTTPException(status_code=400, detail="Email is required.")
+        
+        video_filename = "users/videos/somehow_get_filename_here.mp4"  # Adjust this to retrieve the correct filename
+        video_link = f"http://your-domain.com/users/videos/{video_filename}"
+        
+        send_email(email, video_link)
+        
+        return JSONResponse(content={"message": "Email updated and notification sent successfully."}, status_code=200)
+    except Exception as e:
+        logger.error(f"An error occurred while updating email: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="An error occurred while updating email.")
 
 @app.get("/")
 async def root():
