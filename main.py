@@ -44,6 +44,7 @@ def send_email(email: str, video_link: str):
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.sendmail(EMAIL_ADDRESS, email, msg.as_string())
         server.quit()
+        print(f"Email sent successfully to {email}")
     except Exception as e:
         print(f"Failed to send email: {e}")
         traceback.print_exc()
