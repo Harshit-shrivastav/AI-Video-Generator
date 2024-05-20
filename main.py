@@ -5,7 +5,7 @@ import traceback
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Optional, Dict
+from typing import Optional
 
 from fastapi import FastAPI, Form, BackgroundTasks, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
@@ -33,9 +33,6 @@ logger = logging.getLogger(__name__)
 # SMTP Email Configuration
 EMAIL_ADDRESS = "your_email@gmail.com"
 EMAIL_PASSWORD = "your_password"
-
-# In-memory storage for email-to-filename mappings
-email_to_filename: Dict[str, str] = {}
 
 def send_email(email: str, video_link: str):
     try:
@@ -99,20 +96,14 @@ async def generate(
             else:
                 raise HTTPException(status_code=500, detail="Failed to merge final video.")
         
-        unique_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
-        if email:
-            video_filename = f"{email.split('@')[0]}_{unique_suffix}.mp4"
-            email_to_filename[email] = video_filename
-        else:
-            video_filename = f"video_{unique_suffix}.mp4"
-        
+        video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
         final_video_path = f"users/videos/{video_filename}"
         merge_videos(videos, final_video_path)
         
         background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
         if email:
-            video_link = f"http://your-domain.com/users/videos/{video_filename}"
+            video_link = f"http://your-domain.com/{final_video_path}"
             background_tasks.add_task(send_email, email, video_link)
         
         logger.info("Video generation completed successfully.")
@@ -128,14 +119,12 @@ async def update_email(request: Request):
     try:
         data = await request.json()
         email = data.get('email')
-        if not email:
-            raise HTTPException(status_code=400, detail="Email is required.")
+        video_path = data.get('video_path')
+        if not email or not video_path:
+            raise HTTPException(status_code=400, detail="Email and video path are required.")
         
-        video_filename = email_to_filename.get(email)
-        if not video_filename:
-            raise HTTPException(status_code=400, detail="No video found for the provided email.")
+        video_link = f"http://your-domain.com/{video_path}"
         
-        video_link = f"http://your-domain.com/users/videos/{video_filename}"
         send_email(email, video_link)
         
         return JSONResponse(content={"message": "Email updated and notification sent successfully."}, status_code=200)
