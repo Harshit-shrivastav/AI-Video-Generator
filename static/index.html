@@ -43,6 +43,10 @@
                     <option value="hi-IN-SwaraNeural">Swara - Hindi-IN</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="email">Email (optional)</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
             <button type="submit" class="btn btn-primary btn-block">Generate</button>
         </form>
         <div id="progress-container" class="progress-container mt-3">
@@ -52,6 +56,7 @@
             <p id="progress-text" class="mt-2 text-center">Generating video, please wait...</p>
         </div>
         <a id="download-link" href="#" class="btn btn-success mt-3" style="display:none;">Download Video</a>
+       <p>By entering your email you will receive a download link when it is ready and you can safely close the browser session.</p>
     </div>
 
     <script>
@@ -62,8 +67,8 @@
                 $('#progress-container').show();
                 $('#download-link').hide();
                 $('#progress-text').text('Generating video, please wait...');
-                
-                var formData = new FormData(this);
+
+                var formData = new FormData($('#generate-form')[0]);
 
                 $.ajax({
                     url: '/generate',
@@ -88,5 +93,7 @@
             });
         });
     </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
