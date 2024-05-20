@@ -2,6 +2,7 @@ import os
 import time
 import smtplib
 import traceback
+import hashlib
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -96,7 +97,8 @@ async def generate(
             else:
                 raise HTTPException(status_code=500, detail="Failed to merge final video.")
         
-        video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+        hash_input = f"{title}{datetime.now().timestamp()}".encode()
+        video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hashlib.md5(hash_input).hexdigest()}.mp4"
         final_video_path = f"users/videos/{video_filename}"
         merge_videos(videos, final_video_path)
         
