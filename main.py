@@ -108,6 +108,7 @@ async def generate(
         
         if email:
             video_link = f"http://your-domain.com/{final_video_path}"
+            send_email(email, video_link)
             background_tasks.add_task(send_email, email, video_link)
         
         return JSONResponse(content={"message": "Final video created successfully!", "video_path": final_video_path}, status_code=200)
