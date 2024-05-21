@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
-font_path = os.path.join(current_script_dir, '..', 'assets', 'fonts', 'RobotoCondensed-Black.ttf')
+font_path = os.path.join(current_script_dir, '..', 'assets', 'fonts', 'OpenSans-Regular.ttf')
 FONT_PATH = os.path.normpath(font_path)
 
 def generate_background_image(width, height, background_color, border_width, border_color):
