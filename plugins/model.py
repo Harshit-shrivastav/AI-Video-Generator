@@ -3,12 +3,23 @@ import os
 from PIL import Image 
 import google.generativeai as genai
 from groq import Groq
+from llmware.prompts import Prompt
 
-GROQ_API_KEY = os.environ.get('VARIABLE_NAME', 'Grig_api_key')
-GOOGLE_API_KEY = os.environ.get('VARIABLE_NAME', 'Grig_api_key')
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', 'Grig_api_key')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', 'Grig_api_key')
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
+
+
+def get_response(user_prompt) -> str:
+    prompter = Prompt().load_model("phi-3-gguf")
+    output = prompter.prompt_main(
+        user_prompt, prompt_name="default_with_context", temperature=0.30
+    )
+    response = output["llm_response"].strip("\n").partition("<|end|>")[0]
+    return response
+
 
 def get_groq_response(user_prompt, system_prompt):
     client = Groq(api_key=GROQ_API_KEY)
@@ -43,14 +54,12 @@ def get_llm_response(user_prompt, system_prompt, image=None):
         except Exception as e:
             print(f"Error generating response with image: {e}")
             return False
-
-    elif not image and GOOGLE_API_KEY:
+    elif not image:
         try:
-            llm = genai.GenerativeModel('gemini-pro')
-            response = llm.generate_content(formatted_prompt)
-            return response.text
+            response = get_response(formatted_prompt)
+            return response
         except Exception as e:
-            print(f"Error generating response with Google AI: {e}, trying with Groq if possible.")
+            print(f"Error generating response with LLMWare AI: {e}, trying with Groq if possible.")
             if GROQ_API_KEY:
                 result = get_groq_response(user_prompt, system_prompt)
                 return result
@@ -59,12 +68,17 @@ def get_llm_response(user_prompt, system_prompt, image=None):
                 return False
 
     elif not GOOGLE_API_KEY:
-        if GROQ_API_KEY:
-            result = get_groq_response(prompt)
-            return result
-        else:
-            print("No AI API key found.")
-            return False
+        try:
+            response = get_response(formatted_prompt)
+            return response
+        except:
+            try:
+                result = get_groq_response(prompt)
+                return result
+            except Exception as e:
+                print(e)
+                return False
+            
     else:
         print("Unconditional Exception")
         return False
