@@ -6,3 +6,4 @@ fastapi
 groq
 Jinja2
 python-multipart
+llmware
