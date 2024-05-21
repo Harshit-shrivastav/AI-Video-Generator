@@ -1,6 +1,6 @@
 # 📽️ AI Video Generator 🤖
 
-Welcome to the AI Video Generator! This app helps create educational videos easily. Just give it a title, and it does the rest!
+Welcome to the AI Video Generator! This app helps create educational videos easily using llmware. Just give it a title, and it does the rest!
 
 ## 🚀 Features
 
@@ -49,8 +49,7 @@ Here are the variables you need to define before using the AI Video Generator:
 
 - `EMAIL_ADDRESS`: Your Gmail address for SMTP
 - `EMAIL_PASSWORD`: You Gmail app Password For SMTP
-- `GOOGLE_API_KEY`: Gemini API Key
-- `GROQ_API_KEY`: Groq API Key(Optional if Gemini is working in your region)
+- `GROQ_API_KEY`: Groq API Key(Optional)
 
 ## 🚀 Usage
 
