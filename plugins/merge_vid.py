@@ -1,9 +1,10 @@
 import tempfile
 import os
+import asyncio
 from io import BytesIO
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-def merge_videos(video_data_list, save_path):
+async def merge_videos(video_data_list, save_path):
     video_clips = []
     for video_data in video_data_list:
         temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
