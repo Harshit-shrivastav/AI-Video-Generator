@@ -3,6 +3,7 @@ import time
 import smtplib
 import traceback
 import hashlib
+import asyncio
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -99,7 +100,7 @@ async def generate(
             voice = await get_edge_tts(f"{conversation_str}\nuser: {written_text}", speaker)
             
             if voice:
-                vid = merge_image_and_audio(slide, voice)
+                vid = await merge_image_and_audio(slide, voice)
                 if vid:
                     videos.append(vid)
                 else:
@@ -116,7 +117,7 @@ async def generate(
         voice = await get_edge_tts(f"{conversation_str}\nuser: {written_text}", speaker)
         
         if voice:
-            final_vid = merge_image_and_audio(slide, voice)
+            final_vid = await merge_image_and_audio(slide, voice)
             if final_vid:
                 videos.append(final_vid)
             else:
@@ -125,7 +126,7 @@ async def generate(
         hash_input = f"{title}{datetime.now().timestamp()}".encode()
         video_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hashlib.md5(hash_input).hexdigest()}.mp4"
         final_video_path = f"users/videos/{video_filename}"
-        merge_videos(videos, final_video_path)
+        await merge_videos(videos, final_video_path)
         background_tasks.add_task(delete_file_after_24_hours, final_video_path)
         
         logger.info("Video generation completed successfully.")
