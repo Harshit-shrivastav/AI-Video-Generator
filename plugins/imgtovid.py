@@ -1,10 +1,11 @@
+import asyncio
 from io import BytesIO
 import numpy as np
 from moviepy.editor import ImageClip, AudioFileClip, CompositeAudioClip, CompositeVideoClip
 import tempfile
 import os
 
-def merge_image_and_audio(image, audio_data, fps=24, save_path=None):
+async def merge_image_and_audio(image, audio_data, fps=24, save_path=None):
     image_np = np.array(image)
     image_clip = ImageClip(image_np).set_fps(fps)
     audio_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
