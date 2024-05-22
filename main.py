@@ -36,13 +36,12 @@ EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'Email_here')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'Password')
 
 # System Prompt
-slide_prompt = """You are preparing educational slides for students. Ensure concepts are explained clearly and simply, as if presenting directly to the students. Use bullet points for all information. Do not write paragraphs except for subjects like math where step-by-step explanations are necessary. For theoretical subjects, always use bullet points. Separate each point with '\n' to break the line and '\n\n' to beak the lines two times, means insert the space between lines and use (1,2,3...) or by '*' for bullet signs add make sure to insert bullet signs in starting of each point. For example:"1. This is the first point.\n2. This is another bullet point.\n\n3. And this is another with space between above line and so on."Do not include any instructions about subtitles, slide images, or point-by-point lists. The content provided should be detailed and ready for slide creation without additional formatting or instructions. Focus solely on the lesson content."""
+slide_prompt = """You are preparing educational slides for students. Ensure concepts are explained clearly and simply, as if presenting directly to the students. Use bullet points for all information. Do not write paragraphs except for subjects like math where step-by-step explanations are necessary. For theoretical subjects, always use bullet points. Separate each point with '\n' to break the line and '\n\n' to beak the lines two times, means insert the space between lines and use (1,2,3...) or by (◈,☆,⇒,➱,➮➣,➢,☒,☑✔,✓,⊛,◉,⊙,⊛,⊚,‣,⁌,⁍,⦾,⦿) for bullet signs and make sure to insert bullet signs in starting of each point. For example:"1. This is the first point.\n2. This is another bullet point.\n\n3. And this is another with space between above line and so on."Do not include any instructions about subtitles, slide images, or point-by-point lists. The content provided should be detailed and ready for slide creation without additional formatting or instructions. Focus solely on the lesson content."""
 exp_prompt = """You are a talented and creative teacher. Your ability to explain chapters or paragraphs is exceptional, making complex ideas simple and engaging. Explain the given content clearly and creatively, ensuring that anyone, including children, can understand. Do not include any extra comments, such as "I can explain," or any other unrelated remarks. Focus solely on the lines at hand, providing a thorough and comprehensible explanation. Adjust the depth of your explanation according to the length of the text: less text requires a shorter explanation, more text requires a longer explanation."""
 
 # Domain and port 
 DOMAIN = os.environ.get('DOMAIN', 'http://127.0.0.1:8080')
 PORT = os.environ.get('PORT', 8000)
-
 
 def send_email(email: str, video_link: str):
     try:
@@ -82,23 +81,40 @@ async def generate(
 ):
     try:
         logger.info("Generating video started.")
-        llm_response = get_llm_response(title, slide_prompt)
+        conversation_history = []
+        
+        # Initial LLM response
+        user_input = title
+        ai_response = get_llm_response(user_input, slide_prompt)
+        conversation_history.append(f'user: {user_input}, ai: {ai_response}')
+        
         background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-        slide, extra_text, written_text = write_text_on_image(background_image, llm_response)
+        slide, extra_text, written_text = write_text_on_image(background_image, ai_response)
         videos = []
         
         while extra_text:
-            voice = await get_edge_tts(get_llm_response(written_text, exp_prompt), speaker)
+            # Prepare conversation history string
+            conversation_str = '\n'.join(conversation_history)
+            # Get TTS with the history included
+            voice = await get_edge_tts(f"{conversation_str}\nuser: {written_text}", speaker)
+            
             if voice:
                 vid = merge_image_and_audio(slide, voice)
                 if vid:
                     videos.append(vid)
                 else:
                     logger.warning("Failed to merge video. Skipping.")
+            # Update history with new user and AI response
+            ai_response = get_llm_response(written_text, exp_prompt)
+            conversation_history.append(f'user: {written_text}, ai: {ai_response}')
+            
             background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-            slide, extra_text, written_text = write_text_on_image(background_image, extra_text)
+            slide, extra_text, written_text = write_text_on_image(background_image, ai_response)
         
-        voice = await get_edge_tts(get_llm_response(written_text, exp_prompt), speaker)
+        # Final voice synthesis with complete history
+        conversation_str = '\n'.join(conversation_history)
+        voice = await get_edge_tts(f"{conversation_str}\nuser: {written_text}", speaker)
+        
         if voice:
             final_vid = merge_image_and_audio(slide, voice)
             if final_vid:
