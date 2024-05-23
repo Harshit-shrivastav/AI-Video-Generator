@@ -1,4 +1,5 @@
 import requests
+import asyncio 
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import numpy as np
@@ -8,7 +9,7 @@ current_script_dir = os.path.dirname(os.path.abspath(__file__))
 font_path = os.path.join(current_script_dir, '..', 'assets', 'fonts', 'RobotoCondensed-Black.ttf')
 FONT_PATH = os.path.normpath(font_path)
 
-def generate_background_image(width, height, background_color, border_width, border_color):
+async def generate_background_image(width, height, background_color, border_width, border_color):
     image = Image.new('RGBA', (width, height), background_color + (255,))
     border_top_bottom = Image.new('RGBA', (width, border_width), border_color + (255,))
     border_left_right = Image.new('RGBA', (border_width, height), border_color + (255,))
@@ -20,7 +21,7 @@ def generate_background_image(width, height, background_color, border_width, bor
 
     return image
 
-def load_font(font_path, font_size):
+async def load_font(font_path, font_size):
     if font_path.startswith("http://") or font_path.startswith("https://"):
         response = requests.get(font_path)
         font = ImageFont.truetype(BytesIO(response.content), font_size)
@@ -28,10 +29,10 @@ def load_font(font_path, font_size):
         font = ImageFont.truetype(font_path, font_size)
     return font
 
-def write_text_on_image(background_image, text, font_path=FONT_PATH, font_size=48, text_color=(0, 0, 0)):
+async def write_text_on_image(background_image, text, font_path=FONT_PATH, font_size=48, text_color=(0, 0, 0)):
     width, height = background_image.size
     draw = ImageDraw.Draw(background_image)
-    font = load_font(font_path, font_size)
+    font = await load_font(font_path, font_size)
     text_x = 100
     text_y = 100
     max_width = width - 200
