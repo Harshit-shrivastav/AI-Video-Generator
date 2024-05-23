@@ -90,7 +90,7 @@ async def generate(
         conversation_history.append(f'user: {user_input}, ai: {ai_response}')
         
         background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
-        slide, extra_text, written_text = write_text_on_image(background_image, ai_response)
+        slide, extra_text, written_text = await write_text_on_image(background_image, ai_response)
         videos = []
         
         while extra_text:
