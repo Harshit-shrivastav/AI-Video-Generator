@@ -89,7 +89,7 @@ async def generate(
         ai_response = get_llm_response(user_input, slide_prompt)
         conversation_history.append(f'user: {user_input}, ai: {ai_response}')
         
-        background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+        background_image = await generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
         slide, extra_text, written_text = await write_text_on_image(background_image, ai_response)
         videos = []
         
@@ -109,7 +109,7 @@ async def generate(
             ai_response = get_llm_response(written_text, exp_prompt)
             conversation_history.append(f'user: {written_text}, ai: {ai_response}')
             
-            background_image = generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
+            background_image = await generate_background_image(1600, 900, (255, 255, 255), 50, (135, 206, 235))
             slide, extra_text, written_text = await write_text_on_image(background_image, ai_response)
         
         # Final voice synthesis with complete history
