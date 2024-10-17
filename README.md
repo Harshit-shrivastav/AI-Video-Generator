@@ -19,6 +19,9 @@ Before starting, make sure you have:
 - Required Python packages (see `requirements.txt`)
 - A Gmail account for email notifications 📨
 
+### 🆓 If you want a free bot hosting checkout this article here:
+https://github.com/Harshit-shrivastav/Free-Telegram-bot-hosting
+
 ## 🚀 Installation
 
 Here's how to get started:
