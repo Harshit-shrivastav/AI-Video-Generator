@@ -4,11 +4,24 @@ from PIL import Image
 import google.generativeai as genai
 from groq import Groq
 
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY', 'Grig_api_key')
-GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', 'Grig_api_key')
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
+CF_ACCOUNT_ID = os.environ.get('CF_ACCOUNT_ID')
+CF_API_KEY = os.environ.get('CF_API_KEY')
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
+
+def get_cfai_response(account_id=CF_ACCOUNT_ID, auth_token=CF_API_KEY, model_name="@cf/meta/llama-3.1-8b-instruct", system_prompt, user_prompt):
+    response = requests.post(
+        f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model_name}",
+        headers={"Authorization": f"Bearer {auth_token}"},
+        json={"messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]}
+    )
+    return response.json().get('result', {}).get('response')
 
 def get_groq_response(user_prompt, system_prompt):
     client = Groq(api_key=GROQ_API_KEY)
@@ -58,13 +71,17 @@ def get_llm_response(user_prompt, system_prompt, image=None):
                 print("No Groq API key found.")
                 return False
 
-    elif not GOOGLE_API_KEY:
+    elif not GOOGLE_API_KEY and GROQ_API_KEY:
         if GROQ_API_KEY:
             result = get_groq_response(prompt)
             return result
         else:
-            print("No AI API key found.")
-            return False
+            return False 
+    elif CF_ACCOUNT_ID and CF_API_KEY:
+        if CF_ACCOUNT_ID and CF_API_KEY:
+            result = get_cfai_response(prompt)
+            return result
+        else:
+            return False 
     else:
-        print("Unconditional Exception")
-        return False
+        print("No AI API Key Found!")
