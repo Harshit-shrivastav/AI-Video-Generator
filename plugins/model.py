@@ -77,7 +77,7 @@ def get_llm_response(user_prompt, system_prompt, image=None):
             return result
         else:
             return False 
-    elif CF_ACCOUNT_ID and CF_API_KEY:
+    elif not GOOGLE_API_KEY and not GROQ_API_KEY and CF_ACCOUNT_ID and CF_API_KEY:
         if CF_ACCOUNT_ID and CF_API_KEY:
             result = get_cfai_response(prompt)
             return result
