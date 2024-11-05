@@ -3,11 +3,7 @@ import os
 from PIL import Image 
 import google.generativeai as genai
 from groq import Groq
-
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
-GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
-CF_ACCOUNT_ID = os.environ.get('CF_ACCOUNT_ID')
-CF_API_KEY = os.environ.get('CF_API_KEY')
+from config import GROQ_API_KEY, GOOGLE_API_KEY, CF_ACCOUNT_ID, CF_API_KEY 
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
