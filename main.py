@@ -18,6 +18,9 @@ from plugins.merge_vid import merge_videos
 from plugins.imgtovid import merge_image_and_audio
 from plugins.msedge_tts import get_edge_tts
 from plugins.model import get_llm_response
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -42,7 +45,6 @@ exp_prompt = """You are a talented and creative teacher. Your ability to explain
 # Domain and port 
 DOMAIN = os.environ.get('DOMAIN', 'http://127.0.0.1:8080')
 PORT = os.environ.get('PORT', 8000)
-
 
 def send_email(email: str, video_link: str):
     try:
